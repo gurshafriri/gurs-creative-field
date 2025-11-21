@@ -6,5 +6,5 @@ export default defineConfig({
   plugins: [react()],
   // IMPORTANT: Replace 'YOUR_REPO_NAME' with your actual GitHub repository name.
   // Example: if your repo is https://github.com/gur/portfolio, use '/portfolio/'
-  base: '/YOUR_REPO_NAME/',
+  base: '/gurs-creative-field/',
 })
