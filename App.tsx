@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { INITIAL_PROJECTS } from './data/initialWorks';
 import { Project, ProcessedProject } from './types';
 import { audioService } from './services/audioService';
 import { ProjectTile } from './components/ProjectTile';
@@ -18,7 +17,8 @@ function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(window.location.hash === '#admin');
   
   // Data State
-  const [rawProjects, setRawProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [rawProjects, setRawProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Selection State
   const [selectedProject, setSelectedProject] = useState<ProcessedProject | null>(null);
@@ -35,8 +35,44 @@ function App() {
   // RAF Ref for scroll optimization
   const rafRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    const loadData = async () => {
+        try {
+            // Safely access BASE_URL, default to '/' if env is undefined
+            const baseUrl = import.meta.env?.BASE_URL || '/';
+            
+            // Ensure we have correct path handling for the fetch
+            const path = baseUrl.endsWith('/') ? 'works.json' : '/works.json';
+            const fullUrl = `${baseUrl}${path}`.replace('//', '/');
+            
+            const response = await fetch(fullUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setRawProjects(data);
+        } catch (e) {
+            console.error("Could not load projects data:", e);
+            // Fallback attempt to fetch from root if the constructed URL failed
+            try {
+                const response = await fetch('works.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    setRawProjects(data);
+                }
+            } catch (fallbackError) {
+                console.error("Fallback load failed:", fallbackError);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    loadData();
+  }, []);
+
   // Process Projects into Visual World Coordinates
   const processedProjects = useMemo<ProcessedProject[]>(() => {
+    if (!rawProjects.length) return [];
     return rawProjects.map((p) => {
       // Map scores (0-100) to coordinates
       // Tech: 0 (Left) -> 100 (Right)
@@ -172,6 +208,10 @@ function App() {
   
   // Art is 100 -> 0 Top to Bottom
   const currentArt = Math.round(100 - ((scrollPos.y / maxScrollY) * 100));
+
+  if (isLoading) {
+      return <div className="w-full h-screen bg-[#0a0a0a] flex items-center justify-center text-white/50 font-mono">Loading assets...</div>;
+  }
 
   if (isAdminOpen) {
       return (
