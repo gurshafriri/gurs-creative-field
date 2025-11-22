@@ -6,6 +6,7 @@
     "artScore": 58,
     "techScore": 90,
     "tags": [
+      "2025",
       "Music Tool",
       "Max/MSP",
       "Spat",
@@ -23,10 +24,12 @@
     "artScore": 90,
     "techScore": 70,
     "tags": [
+      "2025",
       "Spatial audio",
       "guitar",
       "Max/MSP",
-      "Live Electronics"
+      "Live Electronics",
+      "Performed by Gur"
     ],
     "link": "",
     "imageUrl": "inexi.jpg",
@@ -36,15 +39,17 @@
   {
     "id": "12a1692d-8f87-8043-a86f-cc36455ae44c",
     "title": "As in water face answereth to face",
-    "description": "*כַּ֭מַּיִם הַפָּנִ֣ים לַפָּנִ֑ים   \n  כֵּ֤ן לֵֽב־הָ֝אָדָ֗ם לָאָדָֽם*\n\n*As in water face answereth to face  \n      so the heart of man to man*\n\n\nFor dance, grand piano and 2 pianists",
+    "description": "*כַּ֭מַּיִם הַפָּנִ֣ים לַפָּנִ֑ים   \n  כֵּ֤ן לֵֽב־הָ֝אָדָ֗ם לָאָדָֽם*\n\n*As in water face answereth to face  \n      so the heart of man to man*\n\n\nFor dance, grand piano and 2 pianists\n In collaboration with Matan Serry",
     "techScore": 2,
     "artScore": 90,
     "imageUrl": "asin.jpg",
     "link": "",
     "tags": [
+      "2018",
       "Composition",
       "Piano",
-      "Extended piano"
+      "Extended piano",
+      "Performed by Gur"
     ],
     "audioUrl": "asin.mp3",
     "videoUrl": "",
@@ -54,11 +59,12 @@
     "id": "12a1692d-8f87-800d-b9c3-fc8ecd5daa97",
     "title": "This creative field site ",
     "description": "A personal homepage for works and creation based on an Art/Tech axis, to showcase both areas of my interest and how they collide ",
-    "techScore": 90,
-    "artScore": 70,
-    "imageUrl": "",
+    "techScore": 65,
+    "artScore": 50,
+    "imageUrl": "thissite.jpg",
     "link": "https://www.github.com/gurshafriri/gurs-creative-field",
     "tags": [
+      "2025",
       "Music Tool",
       "JS",
       "HTML",
@@ -77,6 +83,7 @@
     "imageUrl": "",
     "link": "",
     "tags": [
+      "2023",
       "Composition",
       "Max/MSP",
       "OSC",
@@ -96,6 +103,7 @@
     "imageUrl": "",
     "link": "",
     "tags": [
+      "2023",
       "Music Tool",
       "Max/MSP",
       "OSC"
@@ -113,7 +121,9 @@
     "imageUrl": "",
     "link": "",
     "tags": [
-      "Composition",
+      "2024",
+      "Track",
+      "Performed by Gur",
       "Electronic"
     ],
     "audioUrl": "circles.mp3",
@@ -129,10 +139,12 @@
     "imageUrl": "absurd.jpg",
     "link": "https://unemoga.bandcamp.com/album/yemot-haabsurd",
     "tags": [
+      "2017",
       "Composition",
       "Progressive Rock",
       "Guitar",
-      "Vocals"
+      "Vocals",
+      "Performed by Gur"
     ],
     "audioUrl": "absurd.mp3",
     "videoUrl": "",
@@ -141,16 +153,18 @@
   {
     "id": "12a1692d-8f87-80b2-8aa4-d5e449befb36",
     "title": "In.Out",
-    "description": "For prepared upright piano and video projection. \n\nThe performer tries as hard as they can to be inside the piano, inside the sound, be the piano if possible - but finds themself always again out on the other side ",
+    "description": "For prepared upright piano and video projection. \n\nThe performer tries as hard as they can to be inside the piano, inside the sound, be the piano if possible - but finds themself always again out on the other side \n\n",
     "techScore": 15,
     "artScore": 90,
     "imageUrl": "inout.jpg",
     "link": "",
     "tags": [
+      "2023",
       "Composition",
       "Piano",
       "Extended piano",
-      "Audio/Visual interaction"
+      "Audio/Visual interaction",
+      "Performed by Gur"
     ],
     "audioUrl": "inout.mp3",
     "videoUrl": "",
@@ -184,8 +198,8 @@
     "title": "Port",
     "description": "Working with the Port team as a product leader to create amazing developer tools to manage their engineering platform best practices and create an agentic engineering platform. ",
     "techScore": 95,
-    "artScore": 50,
-    "imageUrl": "",
+    "artScore": 25,
+    "imageUrl": "port.jpg",
     "link": "www.port.io",
     "tags": [
       "Product and Software",
@@ -207,10 +221,12 @@
     "imageUrl": "allof.jpg",
     "link": "",
     "tags": [
+      "2019",
       "Composition",
       "Max/MSP",
       "Live electronics",
-      "Tedarim ensamble"
+      "Tedarim ensamble",
+      "Woodwinds"
     ],
     "audioUrl": "allof.mp3",
     "videoUrl": "",
@@ -225,8 +241,10 @@
     "imageUrl": "alpha.jpg",
     "link": "https://www.notion.so/Alpha-bend-synchronisation-12a1692d8f8780eb8b33db9fa549e045",
     "tags": [
+      "2020",
       "Composition",
-      "Spectral analysis"
+      "Spectral analysis",
+      "Mixed ensamble"
     ],
     "audioUrl": "alpha.mp3",
     "videoUrl": "",
@@ -237,10 +255,11 @@
     "title": "Averager",
     "description": "Max for Live device for creating pitch sets with a target average pitch",
     "techScore": 86,
-    "artScore": 26,
+    "artScore": 46,
     "imageUrl": "",
     "link": "https://github.com/gurshafriri/averager",
     "tags": [
+      "2020",
       "Music Tool",
       "Max/MSP",
       "Max for live"
@@ -258,6 +277,7 @@
     "imageUrl": "mobile.jpg",
     "link": "",
     "tags": [
+      "2020",
       "Composition",
       "Max/MSP",
       "Algorithmic composition",
@@ -276,6 +296,7 @@
     "imageUrl": "tabur.jpg",
     "link": "https://www.youtube.com/watch?v=auITvKDuV1o&list=RDauITvKDuV1o",
     "tags": [
+      "2019",
       "Composition",
       "Spectral analysis",
       "Choir",
@@ -294,6 +315,7 @@
     "imageUrl": "",
     "link": "",
     "tags": [
+      "2024",
       "Music Tool",
       "Elixir",
       "Collaboration",
@@ -312,10 +334,14 @@
     "imageUrl": "locomotion.jpg",
     "link": "https://www.notion.so/Locomotion-d2338dee1a1c4130bb84fbcf9deee52d",
     "tags": [
+      "2020",
       "Composition",
       "Max/MSP",
       "Live spatial audio",
-      "Spat"
+      "Spat",
+      "Mixed ensamble",
+      "Guitar",
+      "Performed by Gur"
     ],
     "audioUrl": "locomotion.mp3",
     "videoUrl": "",
