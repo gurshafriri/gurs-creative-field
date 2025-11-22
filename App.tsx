@@ -34,6 +34,9 @@ function App() {
   const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
   const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
   
+  // Scroll Container Ref (Replaces window scroll)
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   // Drag State
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
@@ -42,55 +45,55 @@ function App() {
   // RAF Ref for scroll optimization
   const rafRef = useRef<number | null>(null);
 
-useEffect(() => {
-  let isCancelled = false;
+  useEffect(() => {
+    let isCancelled = false;
 
-  const loadData = async () => {
-    try {
-      // Vite guarantees BASE_URL is a string path prefix
-      const baseUrl = import.meta.env?.BASE_URL || '/';
-
-      // "/works.json" in dev or "/gurs-creative-field/works.json" on GitHub Pages
-      const fullUrl = `${baseUrl}works.json`;
-
-      const response = await fetch(fullUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (!isCancelled) {
-        setRawProjects(data);
-      }
-    } catch (e) {
-      console.error('Could not load projects data:', e);
-
-      // Fallback – relative fetch from current path (e.g. when running in a sandbox)
+    const loadData = async () => {
       try {
-        const response = await fetch('works.json');
-        if (response.ok) {
-          const data = await response.json();
-          if (!isCancelled) {
-            setRawProjects(data);
-          }
+        // Vite guarantees BASE_URL is a string path prefix
+        const baseUrl = import.meta.env?.BASE_URL || '/';
+
+        // "/works.json" in dev or "/gurs-creative-field/works.json" on GitHub Pages
+        const fullUrl = `${baseUrl}works.json`;
+
+        const response = await fetch(fullUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      } catch (fallbackError) {
-        console.error(fallbackError);
-      }
-    } finally {
-      if (!isCancelled) {
-        setIsLoading(false);
-      }
-    }
-  };
 
-  loadData();
+        const data = await response.json();
+        if (!isCancelled) {
+          setRawProjects(data);
+        }
+      } catch (e) {
+        console.error('Could not load projects data:', e);
 
-  // Proper cleanup function (no JSX returned from the effect)
-  return () => {
-    isCancelled = true;
-  };
-}, []);
+        // Fallback – relative fetch from current path (e.g. when running in a sandbox)
+        try {
+          const response = await fetch('works.json');
+          if (response.ok) {
+            const data = await response.json();
+            if (!isCancelled) {
+              setRawProjects(data);
+            }
+          }
+        } catch (fallbackError) {
+          console.error(fallbackError);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadData();
+
+    // Proper cleanup function (no JSX returned from the effect)
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   // Process Projects: Coordinates + Collision Detection
   const processedProjects = useMemo<ProcessedProject[]>(() => {
@@ -171,12 +174,12 @@ useEffect(() => {
 
   // Auto-scroll to results when search changes
   useEffect(() => {
-    if (searchQuery && visibleProjects.length > 0) {
+    if (searchQuery && visibleProjects.length > 0 && scrollContainerRef.current) {
         const target = visibleProjects[0];
         const scaledX = target.x * zoom;
         const scaledY = target.y * zoom;
         
-        window.scrollTo({
+        scrollContainerRef.current.scrollTo({
             left: scaledX - (window.innerWidth / 2),
             top: scaledY - (window.innerHeight / 2),
             behavior: 'smooth'
@@ -187,8 +190,11 @@ useEffect(() => {
   // --- Event Handlers ---
 
   const updateState = () => {
-    const winScrollX = window.scrollX;
-    const winScrollY = window.scrollY;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const winScrollX = container.scrollLeft;
+    const winScrollY = container.scrollTop;
     
     setScrollPos({ x: winScrollX, y: winScrollY });
 
@@ -231,23 +237,26 @@ useEffect(() => {
 
   // Drag Logic
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!hasStarted || isAdminOpen || selectedProject) return;
+    if (!hasStarted || isAdminOpen || selectedProject || !scrollContainerRef.current) return;
     if ((e.target as HTMLElement).closest('.project-tile')) return;
 
     setIsDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY };
-    scrollStart.current = { x: window.scrollX, y: window.scrollY };
+    scrollStart.current = { 
+        x: scrollContainerRef.current.scrollLeft, 
+        y: scrollContainerRef.current.scrollTop 
+    };
     document.body.style.cursor = 'grabbing';
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !hasStarted || isAdminOpen) return;
+    if (!isDragging || !hasStarted || isAdminOpen || !scrollContainerRef.current) return;
     e.preventDefault();
     
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
 
-    window.scrollTo(
+    scrollContainerRef.current.scrollTo(
       scrollStart.current.x - dx,
       scrollStart.current.y - dy
     );
@@ -277,6 +286,7 @@ useEffect(() => {
   };
 
   const handleMinimapNavigate = useCallback((x: number, y: number) => {
+      if (!scrollContainerRef.current) return;
       // x, y are target center coordinates in World Pixels
       const scaledX = x * zoom;
       const scaledY = y * zoom;
@@ -284,7 +294,7 @@ useEffect(() => {
       const targetScrollX = scaledX - (window.innerWidth / 2);
       const targetScrollY = scaledY - (window.innerHeight / 2);
 
-      window.scrollTo({
+      scrollContainerRef.current.scrollTo({
           left: targetScrollX,
           top: targetScrollY,
           behavior: 'auto'
@@ -296,12 +306,20 @@ useEffect(() => {
   useEffect(() => {
     const handleHashChange = () => setIsAdminOpen(window.location.hash === '#admin');
     window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', handleResize);
+    
+    // Attach scroll listener to container instead of window
+    const container = scrollContainerRef.current;
+    if (container) {
+        container.addEventListener('scroll', onScroll, { passive: true });
+    }
+
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', handleResize);
+      if (container) {
+          container.removeEventListener('scroll', onScroll);
+      }
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [hasStarted, zoom]); 
@@ -310,20 +328,27 @@ useEffect(() => {
     await audioService.start();
     setHasStarted(true);
     
-    // Center initial view (scaled)
-    const startX = (WORLD_WIDTH * zoom - window.innerWidth) / 2;
-    const startY = (WORLD_HEIGHT * zoom - window.innerHeight) / 2;
-
-    window.scrollTo(startX, startY);
-    
-    requestAnimationFrame(updateState);
+    // Defer scroll to next frame to ensure DOM layout is ready
+    requestAnimationFrame(() => {
+        if (!scrollContainerRef.current) return;
+        
+        // Center initial view (scaled)
+        const startX = (WORLD_WIDTH * zoom - window.innerWidth) / 2;
+        const startY = (WORLD_HEIGHT * zoom - window.innerHeight) / 2;
+        
+        scrollContainerRef.current.scrollTo(startX, startY);
+        requestAnimationFrame(updateState);
+    });
   };
 
   const handleZoom = (delta: number) => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+
       const newZoom = Math.min(1.5, Math.max(0.4, zoom + delta));
       
-      const centerX = window.scrollX + (window.innerWidth / 2);
-      const centerY = window.scrollY + (window.innerHeight / 2);
+      const centerX = container.scrollLeft + (window.innerWidth / 2);
+      const centerY = container.scrollTop + (window.innerHeight / 2);
       
       const worldX = centerX / zoom;
       const worldY = centerY / zoom;
@@ -333,7 +358,7 @@ useEffect(() => {
       requestAnimationFrame(() => {
           const newCenterX = worldX * newZoom;
           const newCenterY = worldY * newZoom;
-          window.scrollTo(
+          container.scrollTo(
               newCenterX - (window.innerWidth / 2),
               newCenterY - (window.innerHeight / 2)
           );
@@ -359,63 +384,69 @@ useEffect(() => {
 
   return (
     <div 
-      className="relative bg-[#0a0a0a] overflow-hidden"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      style={{ 
-          width: `${WORLD_WIDTH * zoom}px`, 
-          height: `${WORLD_HEIGHT * zoom}px`,
-          cursor: isDragging ? 'grabbing' : 'grab',
-      }}
+      ref={scrollContainerRef}
+      className={`w-full h-full bg-[#0a0a0a] relative overflow-auto ${hasStarted ? '' : 'overflow-hidden'}`}
     >
       
       {!hasStarted && <WelcomeOverlay onStart={startExperience} />}
 
       {/* World Container - Scaled */}
-      <div 
-        style={{
-            width: `${WORLD_WIDTH}px`,
-            height: `${WORLD_HEIGHT}px`,
-            transform: `scale(${zoom})`,
-            transformOrigin: '0 0',
+      {/* Wrapper to catch drag events */}
+      <div
+        className="relative origin-top-left"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        style={{ 
+            width: `${WORLD_WIDTH * zoom}px`, 
+            height: `${WORLD_HEIGHT * zoom}px`,
+            cursor: isDragging ? 'grabbing' : 'grab',
         }}
-        className="relative"
       >
-        {/* Background Grid */}
-        <div className="absolute inset-0 pointer-events-none opacity-20"
-                style={{
-                backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
-                backgroundSize: '100px 100px'
-                }}
-        />
-        
-        {/* Axis Labels (In World) */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none select-none uppercase whitespace-nowrap">
-            More Art
-        </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none select-none uppercase whitespace-nowrap">
-            Less Art
-        </div>
-        <div className="absolute left-[-300px] top-1/2 -translate-y-1/2 -rotate-90 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none origin-center whitespace-nowrap select-none uppercase">
-            Less Tech
-        </div>
-        <div className="absolute right-[-300px] top-1/2 -translate-y-1/2 rotate-90 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none origin-center whitespace-nowrap select-none uppercase">
-            More Tech
-        </div>
-
-        {/* Project Nodes */}
-        {visibleProjects.map((project) => (
-            <div key={project.id} style={{ position: 'absolute', left: project.x, top: project.y }} className="project-tile">
-                <ProjectTile 
-                    project={project} 
-                    onClick={(p) => {
-                        if (!isDragging) setSelectedProject(p);
-                    }} 
-                />
+          <div 
+            style={{
+                width: `${WORLD_WIDTH}px`,
+                height: `${WORLD_HEIGHT}px`,
+                transform: `scale(${zoom})`,
+                transformOrigin: '0 0',
+            }}
+            className="relative"
+          >
+            {/* Background Grid */}
+            <div className="absolute inset-0 pointer-events-none opacity-20"
+                    style={{
+                    backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
+                    backgroundSize: '100px 100px'
+                    }}
+            />
+            
+            {/* Axis Labels (In World) */}
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none select-none uppercase whitespace-nowrap">
+                More Art
             </div>
-        ))}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none select-none uppercase whitespace-nowrap">
+                Less Art
+            </div>
+            <div className="absolute left-[-300px] top-1/2 -translate-y-1/2 -rotate-90 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none origin-center whitespace-nowrap select-none uppercase">
+                Less Tech
+            </div>
+            <div className="absolute right-[-300px] top-1/2 -translate-y-1/2 rotate-90 text-neutral-800 font-black tracking-[1em] text-6xl pointer-events-none origin-center whitespace-nowrap select-none uppercase">
+                More Tech
+            </div>
+
+            {/* Project Nodes */}
+            {visibleProjects.map((project) => (
+                <div key={project.id} style={{ position: 'absolute', left: project.x, top: project.y }} className="project-tile">
+                    <ProjectTile 
+                        project={project} 
+                        onClick={(p) => {
+                            if (!isDragging) setSelectedProject(p);
+                        }} 
+                    />
+                </div>
+            ))}
+          </div>
       </div>
       
       {/* Details Sidepanel */}
@@ -425,7 +456,7 @@ useEffect(() => {
           onMuteRequest={handleMuteRequest}
       />
 
-      {/* HUD */}
+      {/* HUD - Placed outside the scaled world but inside the app container */}
       {hasStarted && (
           <>
             <Minimap 
@@ -441,8 +472,8 @@ useEffect(() => {
             />
             
             {/* Left Top: Merged Info & Search */}
-            <div className="fixed top-6 left-6 z-50 flex flex-col gap-3">
-                <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl w-[280px]">
+            <div className="fixed top-4 left-4 right-4 md:top-6 md:left-6 md:right-auto z-50 flex flex-col gap-3 pointer-events-none">
+                <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl w-full md:w-[280px] pointer-events-auto">
                     <div className="p-4 border-b border-white/10">
                         <h2 className="text-white font-semibold text-lg tracking-wider leading-none">
                             <span className="bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">Creative field</span>
@@ -474,7 +505,7 @@ useEffect(() => {
                 </div>
 
                 {/* Zoom Controls */}
-                <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-1 shadow-lg self-start">
+                <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-1 shadow-lg self-start pointer-events-auto">
                      <button 
                         onClick={() => handleZoom(-0.1)}
                         className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
@@ -496,9 +527,9 @@ useEffect(() => {
             </div>
 
             {/* Bottom Left Indicators */}
-            <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-4">
+            <div className="fixed bottom-6 left-4 md:left-6 z-50 flex flex-col gap-4 pointer-events-none">
                 {/* Coordinate Scanner */}
-                <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-lg space-y-2 w-[140px]">
+                <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-lg space-y-2 w-[140px] pointer-events-auto">
                      <div className="flex justify-between items-center text-xs font-mono">
                         <span className="text-blue-400 uppercase">Tech</span>
                         <span className="text-white">{currentCoords.tech}</span>
@@ -519,7 +550,7 @@ useEffect(() => {
                 {/* Audio Panel with Visualizer */}
                  <button 
                     onClick={toggleMute}
-                    className="group relative bg-black/80 backdrop-blur-md border border-white/10 rounded-lg shadow-lg hover:border-white/30 transition-all overflow-hidden w-[140px] h-[60px] flex flex-col justify-end"
+                    className="group relative bg-black/80 backdrop-blur-md border border-white/10 rounded-lg shadow-lg hover:border-white/30 transition-all overflow-hidden w-[140px] h-[60px] flex flex-col justify-end pointer-events-auto"
                  >
                     {/* Visualizer Background */}
                     <div className="absolute inset-0 z-0 opacity-60 group-hover:opacity-80 transition-opacity">
@@ -552,7 +583,7 @@ useEffect(() => {
             </div>
 
              {/* Admin Toggle */}
-            <div className="fixed bottom-6 left-0 w-4 h-4 z-[100]">
+            <div className="fixed bottom-6 left-0 w-4 h-4 z-[100] pointer-events-auto">
                  <button 
                     onClick={() => {
                          window.location.hash = 'admin';
