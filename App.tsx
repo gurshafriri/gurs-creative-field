@@ -265,6 +265,13 @@ useEffect(() => {
       audioService.toggleMute(newState);
   };
 
+  const handleMuteRequest = useCallback(() => {
+      if (!isMuted) {
+          setIsMuted(true);
+          audioService.toggleMute(true);
+      }
+  }, [isMuted]);
+
   const handleAdminUpdate = (updatedProjects: Project[]) => {
       setRawProjects(updatedProjects);
   };
@@ -415,6 +422,7 @@ useEffect(() => {
       <ProjectDetailPanel 
           project={selectedProject} 
           onClose={() => setSelectedProject(null)} 
+          onMuteRequest={handleMuteRequest}
       />
 
       {/* HUD */}
@@ -451,7 +459,7 @@ useEffect(() => {
                             </div>
                             <input 
                                 type="text" 
-                                placeholder="Search works..." 
+                                placeholder="Search works and tags..." 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="bg-transparent border-none text-white text-xs p-2 pl-2 w-full focus:outline-none placeholder:text-neutral-600 font-mono"

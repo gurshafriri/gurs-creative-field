@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ProcessedProject } from '../types';
 
 interface ProjectDetailPanelProps {
     project: ProcessedProject | null;
     onClose: () => void;
+    onMuteRequest: () => void;
 }
 
-export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project, onClose }) => {
+export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project, onClose, onMuteRequest }) => {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    // Monitor for when the iframe grabs focus (which happens when user clicks the play button on an embed)
+    useEffect(() => {
+        if (!project) return;
+
+        const handleWindowBlur = () => {
+            if (document.activeElement === iframeRef.current) {
+                onMuteRequest();
+            }
+        };
+
+        window.addEventListener('blur', handleWindowBlur);
+        return () => window.removeEventListener('blur', handleWindowBlur);
+    }, [project, onMuteRequest]);
+
     if (!project) return null;
 
     // specific handling for base url to ensure media loads in subdirectories
@@ -57,6 +74,7 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
             <div className="w-full aspect-video bg-black relative border-b border-white/10">
                 {embedUrl ? (
                     <iframe 
+                        ref={iframeRef}
                         src={embedUrl} 
                         className="w-full h-full" 
                         title={project.title}
@@ -107,7 +125,13 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                             <span>Audio Recording</span>
                         </div>
-                        <audio key={project.audioUrl} controls className="w-full h-8 opacity-80 hover:opacity-100 transition-opacity" controlsList="nodownload">
+                        <audio 
+                            key={project.audioUrl} 
+                            controls 
+                            className="w-full h-8 opacity-80 hover:opacity-100 transition-opacity" 
+                            controlsList="nodownload"
+                            onPlay={onMuteRequest}
+                        >
                             <source src={mediaPath(project.audioUrl)} type="audio/mpeg" />
                             Your browser does not support the audio element.
                         </audio>
