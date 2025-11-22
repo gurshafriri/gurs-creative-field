@@ -6,6 +6,7 @@ import { Minimap } from './components/Minimap';
 import { WelcomeOverlay } from './components/WelcomeOverlay';
 import { AdminPanel } from './components/AdminPanel';
 import { ProjectDetailPanel } from './components/ProjectDetailPanel';
+import { AudioVisualizer } from './components/AudioVisualizer';
 
 // Constants for the virtual world size
 const WORLD_WIDTH = 3000;
@@ -47,7 +48,7 @@ useEffect(() => {
   const loadData = async () => {
     try {
       // Vite guarantees BASE_URL is a string path prefix
-      const baseUrl = import.meta.env.BASE_URL;
+      const baseUrl = import.meta.env?.BASE_URL || '/';
 
       // "/works.json" in dev or "/gurs-creative-field/works.json" on GitHub Pages
       const fullUrl = `${baseUrl}works.json`;
@@ -432,7 +433,7 @@ useEffect(() => {
             />
             
             {/* Left Top: Merged Info & Search */}
-            <div className="fixed top-6 left-6 z-50 flex flex-col">
+            <div className="fixed top-6 left-6 z-50 flex flex-col gap-3">
                 <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl w-[280px]">
                     <div className="p-4 border-b border-white/10">
                         <h2 className="text-white font-semibold text-lg tracking-wider leading-none">
@@ -463,6 +464,27 @@ useEffect(() => {
                         </div>
                     </div>
                 </div>
+
+                {/* Zoom Controls */}
+                <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-1 shadow-lg self-start">
+                     <button 
+                        onClick={() => handleZoom(-0.1)}
+                        className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+                        </svg>
+                     </button>
+                     <span className="text-xs font-mono w-8 text-center text-neutral-500">{Math.round(zoom * 100)}%</span>
+                     <button 
+                        onClick={() => handleZoom(0.1)}
+                        className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                     </button>
+                </div>
             </div>
 
             {/* Bottom Left Indicators */}
@@ -486,47 +508,38 @@ useEffect(() => {
                      </div>
                 </div>
 
-                {/* Zoom Controls */}
-                <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-1 shadow-lg self-start">
-                     <button 
-                        onClick={() => handleZoom(-0.1)}
-                        className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
-                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-                        </svg>
-                     </button>
-                     <span className="text-xs font-mono w-8 text-center text-neutral-500">{Math.round(zoom * 100)}%</span>
-                     <button 
-                        onClick={() => handleZoom(0.1)}
-                        className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors"
-                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                     </button>
-                </div>
-
-                {/* Audio Toggle */}
+                {/* Audio Panel with Visualizer */}
                  <button 
                     onClick={toggleMute}
-                    className="flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-lg hover:bg-white/10 transition-colors self-start w-[140px]"
+                    className="group relative bg-black/80 backdrop-blur-md border border-white/10 rounded-lg shadow-lg hover:border-white/30 transition-all overflow-hidden w-[140px] h-[60px] flex flex-col justify-end"
                  >
-                     {isMuted ? (
-                         <>
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-400">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                            </svg>
-                             <span className="text-xs font-mono text-neutral-400">Unmute</span>
-                         </>
-                     ) : (
-                         <>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-green-400">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                            </svg>
-                            <span className="text-xs font-mono text-neutral-400">Sound On</span>
-                         </>
-                     )}
+                    {/* Visualizer Background */}
+                    <div className="absolute inset-0 z-0 opacity-60 group-hover:opacity-80 transition-opacity">
+                         <AudioVisualizer 
+                            isActive={!isMuted} 
+                            techScore={currentCoords.tech} 
+                            artScore={currentCoords.art} 
+                        />
+                    </div>
+
+                    {/* Label Overlay */}
+                    <div className="relative z-10 p-2 w-full flex items-center justify-between bg-gradient-to-t from-black/90 to-transparent">
+                         {isMuted ? (
+                             <>
+                                <span className="text-[10px] font-mono text-neutral-400">Sound Off</span>
+                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 text-red-400">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                                </svg>
+                             </>
+                         ) : (
+                             <>
+                                <span className="text-[10px] font-mono text-neutral-300 group-hover:text-white">Sound On</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 text-green-400">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                                </svg>
+                             </>
+                         )}
+                    </div>
                  </button>
             </div>
 
