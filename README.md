@@ -1,9 +1,8 @@
-# Sonic Matrix Portfolio: The Creative Field
+# Gur's works portfolio: The Creative Field
 
 A spatial, audio-visual portfolio experiment that maps creative works onto a 2D plane defined by **Technicality** (X-axis) and **Artistic Expression** (Y-axis).
 
-![Project Preview](public/media/preview.png) 
-*(Note: Add a screenshot of the interface here if available)*
+<img width="1888" height="986" alt="image" src="https://github.com/user-attachments/assets/df0f0a4a-5720-4cc2-b3a5-1a39d77774ec" />
 
 ## Concept
 
