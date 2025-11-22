@@ -101,7 +101,7 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
             </div>
 
             {/* Content Container */}
-            <div className="p-8 space-y-8">
+            <div className="p-8 space-y-8 pb-32">
                 
                 {/* Header */}
                 <div className="space-y-3">
