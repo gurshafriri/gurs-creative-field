@@ -121,14 +121,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ projects, onUpdate, onCl
 
                         <div className="grid grid-cols-1 gap-6">
                             {/* Title */}
-                            <div className="space-y-2">
-                                <label className="block text-xs uppercase tracking-widest text-neutral-500">Title</label>
-                                <input 
-                                    type="text" 
-                                    value={selectedProject.title}
-                                    onChange={(e) => handleFieldChange('title', e.target.value)}
-                                    className="w-full bg-neutral-800 border border-white/10 rounded p-3 focus:border-blue-500 focus:outline-none transition-colors"
-                                />
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="col-span-2 space-y-2">
+                                    <label className="block text-xs uppercase tracking-widest text-neutral-500">Title</label>
+                                    <input 
+                                        type="text" 
+                                        value={selectedProject.title}
+                                        onChange={(e) => handleFieldChange('title', e.target.value)}
+                                        className="w-full bg-neutral-800 border border-white/10 rounded p-3 focus:border-blue-500 focus:outline-none transition-colors"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-xs uppercase tracking-widest text-neutral-500">Date (MM/YY)</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="01/24"
+                                        value={selectedProject.date || ''}
+                                        onChange={(e) => handleFieldChange('date', e.target.value)}
+                                        className="w-full bg-neutral-800 border border-white/10 rounded p-3 focus:border-blue-500 focus:outline-none transition-colors"
+                                    />
+                                </div>
                             </div>
 
                             {/* Scores */}

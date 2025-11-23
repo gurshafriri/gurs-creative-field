@@ -17,6 +17,7 @@ interface MinimapProps {
     artScore: number;
     isMuted: boolean;
     onToggleMute: (e: React.MouseEvent) => void;
+    isPanelOpen: boolean;
 }
 
 export const Minimap: React.FC<MinimapProps> = ({ 
@@ -32,7 +33,8 @@ export const Minimap: React.FC<MinimapProps> = ({
     techScore,
     artScore,
     isMuted,
-    onToggleMute
+    onToggleMute,
+    isPanelOpen
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -185,8 +187,16 @@ export const Minimap: React.FC<MinimapProps> = ({
         };
     }, [isDragging, dragOffset]);
 
+    // Layout Shift Calculation
+    // If panel is open (width 500px) and window > 768 (md), shift left by ~510px
+    const shouldShift = isPanelOpen && windowWidth > 768;
+    const shiftStyle = shouldShift ? { transform: 'translateX(-510px)' } : {};
+
     return (
-        <div className="fixed bottom-6 right-6 z-50 select-none">
+        <div 
+            className="fixed bottom-6 right-6 z-50 select-none transition-transform duration-300 ease-in-out"
+            style={shiftStyle}
+        >
             {/* Container */}
             <div className="relative w-48 h-48 sm:w-64 sm:h-64 bg-neutral-950/80 border border-white/10 shadow-2xl rounded">
                 
@@ -218,7 +228,7 @@ export const Minimap: React.FC<MinimapProps> = ({
                 {/* Layer 2: Coordinate Scanners (Thin Bars) */}
                 
                 {/* Tech: Bottom Bar */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-neutral-800 overflow-hidden z-20">
+                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-neutral-800 overflow-hidden z-20">
                     <div 
                         className="h-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,1)]"
                         style={{ width: `${techScore}%` }}
@@ -226,12 +236,12 @@ export const Minimap: React.FC<MinimapProps> = ({
                 </div>
                 {/* Tech Label (Floating above bar) */}
                 <div className="absolute bottom-1.5 left-1 z-20 flex items-center gap-1 pointer-events-none">
-                    <span className="text-[10px] font-bold text-neutral-500 tracking-widest">tech</span>
+                    <span className="text-[10px] font-bold text-neutral-500 tracking-widest">TECH</span>
                     <span className="text-[10px] font-mono text-blue-300 min-w-[20px]">{Math.round(techScore)}</span>
                 </div>
 
                 {/* Art: Right Bar */}
-                <div className="absolute top-0 right-0 h-full w-1 bg-neutral-800 overflow-hidden z-20">
+                <div className="absolute top-0 right-0 h-full w-0.5 bg-neutral-800 overflow-hidden z-20">
                      <div 
                         className="w-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,1)] absolute bottom-0"
                         style={{ height: `${artScore}%` }}
@@ -240,7 +250,7 @@ export const Minimap: React.FC<MinimapProps> = ({
                 {/* Art Label (Floating left of bar) */}
                 <div className="absolute top-1 right-2 z-20 flex items-center gap-1 pointer-events-none">
                     <span className="text-[10px] font-mono text-purple-300 min-w-[20px] text-right">{Math.round(artScore)}</span>
-                    <span className="text-[10px] font-bold text-neutral-500 tracking-widest">art</span>
+                    <span className="text-[10px] font-bold text-neutral-500 tracking-widest">ART</span>
                 </div>
 
                 {/* Audio Toggle (Bottom Right, inside container to keep unit cohesive, but accessible) */}

@@ -2,6 +2,7 @@ export interface Project {
     id: string;
     title: string;
     description: string;
+    date?: string; // MM/YY
     artScore: number; // 0-100
     techScore: number; // 0-100
     imageUrl?: string;

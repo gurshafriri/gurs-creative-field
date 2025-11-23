@@ -473,6 +473,7 @@ function App() {
                 artScore={currentCoords.art}
                 isMuted={isMuted}
                 onToggleMute={toggleMute}
+                isPanelOpen={!!selectedProject}
             />
             
             {/* Left Top: Merged Info & Search */}
