@@ -29,6 +29,16 @@ function App() {
   // Selection State
   const [selectedProject, setSelectedProject] = useState<ProcessedProject | null>(null);
 
+  // Audio Playback State
+  const [playingProject, setPlayingProject] = useState<ProcessedProject | null>(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  
+  // Refs for Audio
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   // Window/Scroll State
   const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
   const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -44,14 +54,18 @@ function App() {
   // RAF Ref for scroll optimization
   const rafRef = useRef<number | null>(null);
 
+  const baseUrl = import.meta.env?.BASE_URL || '/';
+  const mediaPath = (filename?: string) => {
+      if (!filename) return '';
+      const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
+      return `${baseUrl}media/${cleanFilename}`.replace('//', '/');
+  };
+
   useEffect(() => {
     let isCancelled = false;
 
     const loadData = async () => {
       try {
-        // Vite guarantees BASE_URL is a string path prefix
-        const baseUrl = import.meta.env?.BASE_URL || '/';
-
         // "/works.json" in dev or "/gurs-creative-field/works.json" on GitHub Pages
         const fullUrl = `${baseUrl}works.json`;
 
@@ -186,6 +200,53 @@ function App() {
     }
   }, [searchQuery, visibleProjects, zoom]);
 
+  // --- Audio Logic ---
+
+  // Handle Play/Pause
+  useEffect(() => {
+      if (!audioRef.current || !playingProject) return;
+      
+      const src = mediaPath(playingProject.audioUrl);
+      
+      // Load source if changed
+      if (audioRef.current.getAttribute('src') !== src) {
+          audioRef.current.src = src;
+          audioRef.current.load();
+      }
+
+      if (isAudioPlaying) {
+          audioRef.current.play().catch(e => {
+              console.warn("Autoplay blocked or failed", e);
+              setIsAudioPlaying(false);
+          });
+      } else {
+          audioRef.current.pause();
+      }
+
+  }, [playingProject, isAudioPlaying]);
+
+  const handleAudioTimeUpdate = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+      const audio = e.currentTarget;
+      setAudioCurrentTime(audio.currentTime);
+      setAudioDuration(audio.duration || 0);
+      setAudioProgress((audio.currentTime / (audio.duration || 1)) * 100);
+  };
+
+  const handleAudioMetadata = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+      setAudioDuration(e.currentTarget.duration || 0);
+  };
+
+  const handleAudioEnded = () => {
+      setIsAudioPlaying(false);
+      setAudioProgress(0);
+  };
+
+  const handleSeek = (time: number) => {
+      if (audioRef.current) {
+          audioRef.current.currentTime = time;
+      }
+  };
+
   // --- Event Handlers ---
 
   const updateState = () => {
@@ -197,19 +258,19 @@ function App() {
     
     setScrollPos({ x: winScrollX, y: winScrollY });
 
-    // Center point in World Coordinates
-    const centerX = (winScrollX + (windowSize.w / 2)) / zoom;
-    const centerY = (winScrollY + (windowSize.h / 2)) / zoom;
+    // Calculate Scroll Ratio (0 to 1) based on available scroll area
+    // This ensures that regardless of zoom, 0% scroll is Left/Top and 100% scroll is Right/Bottom
+    const maxScrollX = container.scrollWidth - container.clientWidth;
+    const maxScrollY = container.scrollHeight - container.clientHeight;
+    
+    // Avoid divide by zero if content fits the screen exactly
+    const xRatio = maxScrollX > 0 ? winScrollX / maxScrollX : 0.5;
+    const yRatio = maxScrollY > 0 ? winScrollY / maxScrollY : 0.5;
 
-    const xRatio = Math.max(0, Math.min(1, centerX / WORLD_WIDTH));
-    const yRatio = Math.max(0, Math.min(1, centerY / WORLD_HEIGHT));
-    
-    // Update HUD State
-    const margin = 400;
-    const usable = WORLD_WIDTH - margin * 2;
-    
-    const techVal = Math.round(((centerX - margin) / usable) * 100);
-    const artVal = Math.round(100 - ((centerY - margin) / usable) * 100);
+    // Tech: 0 (Left) -> 100 (Right)
+    const techVal = Math.round(xRatio * 100);
+    // Art: 100 (Top) -> 0 (Bottom) (ScrollY 0 is Top)
+    const artVal = Math.round((1 - yRatio) * 100);
     
     setCurrentCoords({
         tech: Math.max(0, Math.min(100, techVal)),
@@ -217,7 +278,8 @@ function App() {
     });
 
     if (hasStarted) {
-        audioService.updateParams(xRatio, yRatio);
+        // Pass normalized ratios (0-1) to audio service
+        audioService.updateParams(xRatio, 1 - yRatio);
     }
   };
 
@@ -274,11 +336,28 @@ function App() {
   };
 
   const handleMuteRequest = useCallback(() => {
+      // Mute the ambient audio when a track starts
       if (!isMuted) {
           setIsMuted(true);
           audioService.toggleMute(true);
       }
   }, [isMuted]);
+
+  // Audio Handlers for Project
+  const handlePlayAudio = (project: ProcessedProject) => {
+      if (playingProject?.id === project.id) {
+          // If clicking same project, just toggle play
+          setIsAudioPlaying(true);
+      } else {
+          setPlayingProject(project);
+          setIsAudioPlaying(true);
+      }
+      handleMuteRequest(); 
+  };
+
+  const handleTogglePlay = (shouldPlay: boolean) => {
+      setIsAudioPlaying(shouldPlay);
+  };
 
   const handleAdminUpdate = (updatedProjects: Project[]) => {
       setRawProjects(updatedProjects);
@@ -386,6 +465,15 @@ function App() {
       
       {!hasStarted && <WelcomeOverlay onStart={startExperience} />}
 
+      {/* Hidden Audio Element */}
+      <audio 
+          ref={audioRef}
+          className="hidden"
+          onTimeUpdate={handleAudioTimeUpdate}
+          onLoadedMetadata={handleAudioMetadata}
+          onEnded={handleAudioEnded}
+      />
+
       {/* World Container - Scaled */}
       <div 
         ref={scrollContainerRef}
@@ -452,8 +540,16 @@ function App() {
       {/* Details Sidepanel */}
       <ProjectDetailPanel 
           project={selectedProject} 
+          currentPlaying={playingProject}
+          isPlaying={isAudioPlaying}
+          audioProgress={audioProgress}
+          audioDuration={audioDuration}
+          audioCurrentTime={audioCurrentTime}
           onClose={() => setSelectedProject(null)} 
           onMuteRequest={handleMuteRequest}
+          onPlayAudio={handlePlayAudio}
+          onTogglePlay={handleTogglePlay}
+          onSeek={handleSeek}
       />
 
       {/* HUD - Placed OUTSIDE the scroll container to ensure fixed positioning works reliably */}
@@ -476,17 +572,53 @@ function App() {
                 isPanelOpen={!!selectedProject}
             />
             
-            {/* Left Top: Merged Info & Search */}
+            {/* Left Top: Merged Info, Search & Now Playing */}
             <div className="fixed top-4 left-4 right-4 md:top-6 md:left-6 md:right-auto z-50 flex flex-col gap-3 pointer-events-none">
                 <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl w-full md:w-[280px] pointer-events-auto">
-                    <div className="p-4 border-b border-white/10">
-                        <h2 className="text-white font-semibold text-lg tracking-wider leading-none">
-                            <span className="bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">Creative field</span>
-                        </h2>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">by Gur Shafriri</p>
+                    <div className="p-4 border-b border-white/10 flex justify-between items-center gap-2">
+                        <div>
+                            <h2 className="text-white font-semibold text-lg tracking-wider leading-none">
+                                <span className="bg-gradient-to-r from-purple-300 to-blue-300 text-transparent bg-clip-text">Creative field</span>
+                            </h2>
+                            <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">by Gur Shafriri</p>
+                        </div>
+
+                        {/* Playing Badge (Mini) */}
+                        {playingProject && (
+                            <div 
+                                onClick={() => setSelectedProject(playingProject)}
+                                className="relative w-10 h-10 shrink-0 cursor-pointer group rounded-md overflow-hidden border border-white/20 hover:border-blue-400 transition-colors"
+                                title={`Playing: ${playingProject.title}`}
+                            >
+                                {/* Background Image */}
+                                {playingProject.imageUrl ? (
+                                    <img 
+                                        src={mediaPath(playingProject.imageUrl)} 
+                                        alt={playingProject.title}
+                                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-neutral-800" />
+                                )}
+                                
+                                {/* Animation Overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                    {isAudioPlaying ? (
+                                        <div className="flex gap-0.5 items-center">
+                                            <div className="w-0.5 h-2 bg-white animate-[bounce_1s_infinite]" />
+                                            <div className="w-0.5 h-3 bg-white animate-[bounce_1.2s_infinite]" />
+                                            <div className="w-0.5 h-2 bg-white animate-[bounce_0.8s_infinite]" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-2 h-2 rounded-full bg-white/50" />
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                     
-                    <div className="p-2 bg-white/5">
+                    <div className="p-2 bg-white/5 space-y-2">
+                        {/* Search Bar */}
                         <div className="flex items-center bg-black/50 rounded-lg border border-white/5">
                              <div className="pl-2 text-neutral-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

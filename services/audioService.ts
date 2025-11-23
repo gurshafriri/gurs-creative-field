@@ -106,6 +106,7 @@ class AudioService {
 
     public updateParams(x: number, y: number) {
         // x, y are normalized 0 to 1
+        // y = 1 is Top (More Art), y = 0 is Bottom (Less Art)
         if (!this.audioCtx || !this.filterNode || !this.oscLow || !this.oscHigh) return;
         
         const now = this.audioCtx.currentTime;
@@ -121,11 +122,13 @@ class AudioService {
         const root = 110; // A2
         
         // Osc Low: Fundamental
-        const targetLow = root - (y * 30); 
+        // Higher Y (More Art/Top) = Higher Pitch
+        // Lower Y (Less Art/Bottom) = Lower Pitch (Root)
+        const targetLow = root + (y * 30); 
         this.oscLow.frequency.setTargetAtTime(targetLow, now, rampTime);
 
         // Osc High: Harmonic
-        const targetHigh = (root * 1.5) - (y * 35);
+        const targetHigh = (root * 1.5) + (y * 35);
         this.oscHigh.frequency.setTargetAtTime(targetHigh, now, rampTime);
         
         // Modulate delay feedback based on X

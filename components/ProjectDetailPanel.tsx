@@ -1,10 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ProcessedProject } from '../types';
 
 interface ProjectDetailPanelProps {
     project: ProcessedProject | null;
+    currentPlaying: ProcessedProject | null;
+    isPlaying?: boolean;
+    audioProgress?: number;
+    audioDuration?: number;
+    audioCurrentTime?: number;
     onClose: () => void;
     onMuteRequest: () => void;
+    onPlayAudio: (p: ProcessedProject) => void;
+    onTogglePlay?: (play: boolean) => void;
+    onSeek?: (time: number) => void;
 }
 
 // Basic Markdown Parser for Bold and Italics
@@ -32,10 +40,31 @@ const renderMarkdown = (text: string) => {
     });
 };
 
-export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project, onClose, onMuteRequest }) => {
-    const iframeRef = useRef<HTMLIFrameElement>(null);
+// Helper for MM:SS format
+const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds) || !isFinite(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
-    // Monitor for when the iframe grabs focus (which happens when user clicks the play button on an embed)
+export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ 
+    project, 
+    currentPlaying, 
+    isPlaying,
+    audioProgress = 0,
+    audioDuration = 0,
+    audioCurrentTime = 0,
+    onClose, 
+    onMuteRequest, 
+    onPlayAudio,
+    onTogglePlay,
+    onSeek
+}) => {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [localDuration, setLocalDuration] = useState(0);
+
+    // Monitor for when the iframe grabs focus
     useEffect(() => {
         if (!project) return;
 
@@ -48,6 +77,36 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
         window.addEventListener('blur', handleWindowBlur);
         return () => window.removeEventListener('blur', handleWindowBlur);
     }, [project, onMuteRequest]);
+
+    // Pre-fetch duration for display if audio exists
+    useEffect(() => {
+        setLocalDuration(0); // Reset on change
+        if (!project?.audioUrl) return;
+
+        // If we are already playing this track, we don't need to fetch
+        if (currentPlaying?.id === project.id && audioDuration > 0) {
+            return; 
+        }
+
+        const baseUrl = import.meta.env?.BASE_URL || '/';
+        const cleanFilename = project.audioUrl.startsWith('/') ? project.audioUrl.slice(1) : project.audioUrl;
+        const src = `${baseUrl}media/${cleanFilename}`.replace('//', '/');
+
+        const audio = new Audio(src);
+        audio.preload = 'metadata';
+        
+        const onLoadedMetadata = () => {
+             if (isFinite(audio.duration)) {
+                setLocalDuration(audio.duration);
+             }
+        };
+
+        audio.addEventListener('loadedmetadata', onLoadedMetadata);
+        return () => {
+            audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+            audio.src = ''; // Cleanup
+        };
+    }, [project?.audioUrl, project?.id]); // Re-run when project changes
 
     if (!project) return null;
 
@@ -98,6 +157,10 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
             </div>
         );
     };
+
+    const isCurrentTrack = currentPlaying?.id === project.id;
+    // If it's the current track, use the App's definitive duration, otherwise use local metadata
+    const durationToDisplay = (isCurrentTrack && audioDuration > 0) ? audioDuration : localDuration;
 
     return (
         <div className="fixed inset-y-0 right-0 z-[60] w-full md:w-[500px] bg-neutral-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl transform transition-transform duration-300 overflow-y-auto">
@@ -163,23 +226,76 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({ project,
                     </div>
                 </div>
 
-                {/* Audio Player */}
+                {/* Audio Player Controls */}
                 {project.audioUrl && (
-                    <div className="bg-neutral-800/40 rounded-xl p-4 border border-white/10">
-                        <div className="text-[10px] text-neutral-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span>Audio Recording</span>
-                        </div>
-                        <audio 
-                            key={project.audioUrl} 
-                            controls 
-                            className="w-full h-8 opacity-80 hover:opacity-100 transition-opacity" 
-                            controlsList="nodownload"
-                            onPlay={onMuteRequest}
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex items-center gap-4">
+                        
+                        {/* Play/Pause Button */}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (isCurrentTrack && onTogglePlay) {
+                                    onTogglePlay(!isPlaying);
+                                } else {
+                                    onPlayAudio(project);
+                                }
+                            }}
+                            className={`w-10 h-10 flex items-center justify-center rounded-full shrink-0 transition-all duration-300
+                                ${isCurrentTrack && isPlaying
+                                    ? 'bg-neutral-100 text-black shadow-lg shadow-white/10'
+                                    : 'bg-white/10 text-white hover:bg-white/20'
+                                }
+                            `}
                         >
-                            <source src={mediaPath(project.audioUrl)} type="audio/mpeg" />
-                            Your browser does not support the audio element.
-                        </audio>
+                             {isCurrentTrack && isPlaying ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-3 h-3">
+                                    <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 ml-0.5">
+                                    <path fillRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clipRule="evenodd" />
+                                </svg>
+                            )}
+                        </button>
+
+                        {/* Progress Bar & Info */}
+                        <div className="flex-1 flex flex-col justify-center">
+                            <div className="flex justify-between items-center text-[10px] uppercase tracking-widest text-neutral-500 font-medium mb-3">
+                                 <span>Audio recording</span>
+                                 <span className="font-mono text-neutral-400">
+                                    {isCurrentTrack ? formatTime(audioCurrentTime) : "0:00"} / {formatTime(durationToDisplay)}
+                                </span>
+                            </div>
+                            
+                            <div className="relative h-1 w-full bg-neutral-800 rounded-full group">
+                                {/* Fill */}
+                                <div 
+                                    className="absolute top-0 left-0 h-full bg-white/80 rounded-full transition-all duration-100 ease-linear"
+                                    style={{ width: `${isCurrentTrack ? (audioProgress || 0) : 0}%` }}
+                                />
+                                
+                                {/* Interactive Input */}
+                                <input 
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    value={isCurrentTrack ? (audioProgress || 0) : 0}
+                                    onChange={(e) => {
+                                        if (isCurrentTrack && onSeek && audioDuration) {
+                                            const percent = parseFloat(e.target.value);
+                                            const time = (percent / 100) * audioDuration;
+                                            onSeek(time);
+                                        }
+                                    }}
+                                    disabled={!isCurrentTrack}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                />
+                                
+                                {/* Hover Effect - Hitbox expansion */}
+                                <div className="absolute inset-0 -top-2 -bottom-2" />
+                            </div>
+                        </div>
                     </div>
                 )}
 

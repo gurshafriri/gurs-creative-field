@@ -1,5 +1,43 @@
 [
   {
+    "id": "331d4eaf-5b86-4dd2-ad6e-45496a305fe1",
+    "title": "Shti Vae'rev",
+    "description": "Arrows pointing in and out, starting out from the guitar ",
+    "artScore": 59,
+    "techScore": 14,
+    "tags": [
+      "2024",
+      "Track",
+      "Guitar",
+      "Electronic",
+      "Performed by Gur",
+      "Vocals"
+    ],
+    "link": "",
+    "date": "01/24",
+    "imageUrl": "shti.jpg",
+    "audioUrl": "shti.mp3"
+  },
+  {
+    "id": "13674bc1-8361-43ce-902b-0193319c6094",
+    "title": "Circle with a dot ",
+    "description": "Arrows pointing in, starting out from a djembe beat. ",
+    "artScore": 58,
+    "techScore": 15,
+    "tags": [
+      "2024",
+      "Track",
+      "Electronic",
+      "Vocals",
+      "Performed by Gur",
+      "Percussion"
+    ],
+    "link": "",
+    "imageUrl": "circle.jpg",
+    "audioUrl": "cicle.mp3",
+    "date": "01/24"
+  },
+  {
     "id": "738fd11c-4126-42d4-a075-c317f9df0607",
     "title": "Audio Spacer",
     "description": "A tool for slicing, shifting and distributing audio in space. \n",
@@ -80,7 +118,7 @@
     "description": "A short piece for piano and reverse companion",
     "techScore": 70,
     "artScore": 75,
-    "imageUrl": "",
+    "imageUrl": "crabs.jpg",
     "link": "",
     "tags": [
       "2023",
@@ -100,7 +138,7 @@
     "description": "Mobile tool for real time reversing\n",
     "techScore": 80,
     "artScore": 50,
-    "imageUrl": "",
+    "imageUrl": "reverse.jpg",
     "link": "",
     "tags": [
       "2023",
@@ -109,24 +147,6 @@
       "OSC"
     ],
     "audioUrl": "",
-    "videoUrl": "",
-    "scoreUrl": ""
-  },
-  {
-    "id": "12a1692d-8f87-800c-9775-d1086213c92b",
-    "title": "Circles, dots, arrows",
-    "description": "Each starts from a different character but have something in common. ",
-    "techScore": 10,
-    "artScore": 70,
-    "imageUrl": "",
-    "link": "",
-    "tags": [
-      "2024",
-      "Track",
-      "Performed by Gur",
-      "Electronic"
-    ],
-    "audioUrl": "circles.mp3",
     "videoUrl": "",
     "scoreUrl": ""
   },
@@ -140,7 +160,7 @@
     "link": "https://unemoga.bandcamp.com/album/yemot-haabsurd",
     "tags": [
       "2017",
-      "Composition",
+      "Album",
       "Progressive Rock",
       "Guitar",
       "Vocals",
@@ -256,7 +276,7 @@
     "description": "Max for Live device for creating pitch sets with a target average pitch",
     "techScore": 86,
     "artScore": 46,
-    "imageUrl": "",
+    "imageUrl": "averager.jpg",
     "link": "https://github.com/gurshafriri/averager",
     "tags": [
       "2020",
