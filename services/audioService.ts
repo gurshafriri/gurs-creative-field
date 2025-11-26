@@ -106,7 +106,7 @@ class AudioService {
 
     public updateParams(x: number, y: number) {
         // x, y are normalized 0 to 1
-        // y = 1 is Top (More Art), y = 0 is Bottom (Less Art)
+        // y = 1 is Top (More Music), y = 0 is Bottom (Less Music)
         if (!this.audioCtx || !this.filterNode || !this.oscLow || !this.oscHigh) return;
         
         const now = this.audioCtx.currentTime;
@@ -118,12 +118,12 @@ class AudioService {
         const targetFreq = minFilter + (maxFilter - minFilter) * (x * x); 
         this.filterNode.frequency.setTargetAtTime(targetFreq, now, rampTime);
 
-        // --- Y AXIS (ART): HARMONY / PITCH ---
+        // --- Y AXIS (ARMusicT): HARMONY / PITCH ---
         const root = 110; // A2
         
         // Osc Low: Fundamental
-        // Higher Y (More Art/Top) = Higher Pitch
-        // Lower Y (Less Art/Bottom) = Lower Pitch (Root)
+        // Higher Y (More Music/Top) = Higher Pitch
+        // Lower Y (Less Music/Bottom) = Lower Pitch (Root)
         const targetLow = root + (y * 30); 
         this.oscLow.frequency.setTargetAtTime(targetLow, now, rampTime);
 

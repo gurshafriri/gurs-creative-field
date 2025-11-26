@@ -240,14 +240,14 @@ export const Minimap: React.FC<MinimapProps> = ({
                     <span className="text-[10px] font-mono text-blue-300 min-w-[20px]">{Math.round(techScore)}</span>
                 </div>
 
-                {/* Art: Right Bar */}
+                {/* Music: Right Bar */}
                 <div className="absolute top-0 right-0 h-full w-0.5 bg-neutral-800 overflow-hidden z-20">
                      <div 
                         className="w-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,1)] absolute bottom-0"
                         style={{ height: `${artScore}%` }}
                     />
                 </div>
-                {/* Art Label (Floating left of bar) */}
+                {/* Music Label (Floating left of bar) */}
                 <div className="absolute top-1 right-2 z-20 flex items-center gap-1 pointer-events-none">
                     <span className="text-[10px] font-mono text-purple-300 min-w-[20px] text-right">{Math.round(artScore)}</span>
                     <span className="text-[10px] font-bold text-neutral-500 tracking-widest">MUSIC</span>

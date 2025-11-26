@@ -13,7 +13,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({ onStart }) => {
                 </h1>
                 <p className="text-neutral-400 leading-relaxed">
                     Explore creative works by Gur Shafriri.<br/>
-                    Navigate the field to discover works arranged by <span className="text-blue-300">Technicality</span> and <span className="text-purple-300">Artistic expression</span>.
+                    Navigate the field to discover works arranged by <span className="text-blue-300">Techonology</span> and <span className="text-purple-300">Music</span>.
                 </p>
                 
                 <div className="flex justify-center gap-8 text-xs text-neutral-500 font-mono uppercase">

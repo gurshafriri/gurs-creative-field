@@ -47,7 +47,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
             const normalizedTech = techScore / 100; // 0 to 1
             const normalizedArt = artScore / 100;   // 0 to 1
 
-            // Speed: Higher Art = Faster flow
+            // Speed: Higher Music = Faster flow
             const speed = 0.05 + (normalizedArt * 0.15);
             timeRef.current += speed;
 
@@ -83,7 +83,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
             }
 
             // Dynamic Styling
-            // Color shifts from Purple (Art) to Blue (Tech)
+            // Color shifts from Purple (Music) to Blue (Tech)
             const r = 168 - (normalizedTech * 109); // 168 -> 59
             const g = 85 + (normalizedTech * 45);   // 85 -> 130
             const b = 247 - (normalizedTech * 1);   // 247 -> 246

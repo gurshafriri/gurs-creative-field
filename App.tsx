@@ -121,7 +121,7 @@ function App() {
       // Tech: 0 (Left) -> 100 (Right)
       const x = margin + (p.techScore / 100) * usableWidth;
       
-      // Art: 100 (Top) -> 0 (Bottom)
+      // Music: 100 (Top) -> 0 (Bottom)
       const y = margin + ((100 - p.artScore) / 100) * usableHeight;
 
       return { ...p, x, y, vx: 0, vy: 0 };
@@ -269,7 +269,7 @@ function App() {
 
     // Tech: 0 (Left) -> 100 (Right)
     const techVal = Math.round(xRatio * 100);
-    // Art: 100 (Top) -> 0 (Bottom) (ScrollY 0 is Top)
+    // Music: 100 (Top) -> 0 (Bottom) (ScrollY 0 is Top)
     const artVal = Math.round((1 - yRatio) * 100);
     
     setCurrentCoords({

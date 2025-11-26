@@ -1,17 +1,17 @@
 # Gur's works portfolio: The Creative Field
 
-A spatial, audio-visual portfolio experiment that maps creative works onto a 2D plane defined by **Technicality** (X-axis) and **Artistic Expression** (Y-axis).
+A spatial, audio-visual portfolio experiment that maps creative works onto a 2D plane defined by **Technology** (X-axis) and **Music** (Y-axis).
 
 <img width="1888" height="986" alt="image" src="https://github.com/user-attachments/assets/df0f0a4a-5720-4cc2-b3a5-1a39d77774ec" />
 
 ## Concept
 
-This project reimagines the traditional portfolio list as an interactive "field" of creativity. Works are not just listed; they inhabit a specific coordinate in the Art/Tech spectrum.
+This project reimagines the traditional portfolio list as an interactive "field" of creativity. Works are not just listed; they inhabit a specific coordinate in the Music/Tech spectrum.
 
 -   **X-Axis (Technology)**: Ranges from purely acoustic/analogue (Left) to highly digital/algorithmic (Right).
--   **Y-Axis (Art)**: Ranges from functional tools (Bottom) to pure artistic expression (Top).
+-   **Y-Axis (Music)**: Ranges from any type of creation (Bottom) to a Music focused expression (Top).
 
-As you navigate this field, the custom audio engine procedurally generates a soundscape that reflects your current position—becoming more synthetic and glitchy as you move towards "Tech", and more harmonic or flowing as you move towards "Art".
+As you navigate this field, the custom audio engine procedurally generates a soundscape that reflects your current position—becoming more synthetic and glitchy as you move towards "Tech", and more harmonic or flowing as you move towards "Music".
 
 ## Key Features
 

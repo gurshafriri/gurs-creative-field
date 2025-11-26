@@ -180,7 +180,7 @@
   {
     "id": "12a1692d-8f87-80b2-8aa4-d5e449befb36",
     "title": "In.Out",
-    "description": "For prepared upright piano and video projection. \n\nThe performer tries as hard as they can to be inside the piano, inside the sound, be the piano if possible - but finds themself always again out on the other side \n\n",
+    "description": "For a prepared upright piano and video projection. \n\nThe performer tries as hard as they can to be inside the piano, inside the sound, be the piano if possible - but finds themself always again out on the other side \n\n",
     "techScore": 15,
     "artScore": 90,
     "imageUrl": "inout.jpg",
@@ -194,8 +194,8 @@
       "Performed by Gur"
     ],
     "audioUrl": "inout.mp3",
-    "videoUrl": "",
-    "scoreUrl": "inout.pdf",
+    "videoUrl": "https://youtu.be/8UJBojvNFJI?si=wNlDeDKGbc3aikU-",
+    "scoreUrl": "",
     "date": "10/23"
   },
   {
