@@ -17,6 +17,10 @@ class AudioService {
     private isPlaying = false;
     private isMuted = false;
 
+    constructor() {
+        this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
+    }
+
     public initialize() {
         if (this.audioCtx) return;
         const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
@@ -33,6 +37,8 @@ class AudioService {
 
         if (this.isPlaying) return;
         this.isPlaying = true;
+
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
         const now = this.audioCtx.currentTime;
 
@@ -118,7 +124,7 @@ class AudioService {
         const targetFreq = minFilter + (maxFilter - minFilter) * (x * x); 
         this.filterNode.frequency.setTargetAtTime(targetFreq, now, rampTime);
 
-        // --- Y AXIS (ARMusicT): HARMONY / PITCH ---
+        // --- Y AXIS (MUSIC): HARMONY / PITCH ---
         const root = 110; // A2
         
         // Osc Low: Fundamental
@@ -139,13 +145,25 @@ class AudioService {
 
     public toggleMute(muted: boolean) {
         this.isMuted = muted;
+        this.updateMasterGain();
+    }
+
+    private handleVisibilityChange() {
+        this.updateMasterGain();
+    }
+
+    private updateMasterGain() {
         if (!this.audioCtx || !this.masterGain) return;
         
         const now = this.audioCtx.currentTime;
-        // Smooth transition to avoid clicks
-        if (muted) {
+        // Mute if explicitly muted by user OR if the tab is hidden/backgrounded
+        const shouldSilence = this.isMuted || document.hidden;
+
+        if (shouldSilence) {
+            // Quick fade out
             this.masterGain.gain.setTargetAtTime(0, now, 0.1);
         } else {
+            // Restore volume
             this.masterGain.gain.setTargetAtTime(0.5, now, 0.1);
         }
     }

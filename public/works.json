@@ -3,7 +3,7 @@
     "id": "331d4eaf-5b86-4dd2-ad6e-45496a305fe1",
     "title": "Shti Vae'rev",
     "description": "Arrows pointing in and out, starting out from the guitar ",
-    "artScore": 59,
+    "musicScore": 59,
     "techScore": 14,
     "tags": [
       "2024",
@@ -22,7 +22,7 @@
     "id": "13674bc1-8361-43ce-902b-0193319c6094",
     "title": "Circle with a dot ",
     "description": "Arrows pointing in, starting out from a djembe beat. ",
-    "artScore": 58,
+    "musicScore": 58,
     "techScore": 15,
     "tags": [
       "2024",
@@ -41,7 +41,7 @@
     "id": "738fd11c-4126-42d4-a075-c317f9df0607",
     "title": "Audio Spacer",
     "description": "A tool for slicing, shifting and distributing audio in space. \n",
-    "artScore": 58,
+    "musicScore": 58,
     "techScore": 90,
     "tags": [
       "2025",
@@ -60,7 +60,7 @@
     "id": "6436b632-7c47-446f-8e7c-c4fa4c945152",
     "title": "Inhibition/Exhibition I",
     "description": "“Il ne faut donc pas dire que notre corps est dans l'espace ni d'ailleurs qu'il est dans le temps. Il habite l'espace et le temps.” \n“Thus, we must not say that our body is in space, nor for that matter in time. It inhabits space and time.”\nMaurice Merleau‑Ponty \n\nInhibition/Exhibition I (“InExI”), for amplified instrument (electric guitar in this version) and the audio spacer, is a live electroacoustic performance in a dark room with an 8-speaker configuration. The attached recording is a binaural rendering, yet it is best approached by imagining the possibility of moving through the space and perceiving the work from changing vantage points, rather than following the score or a video. \n\nThe audio spacer (github.com/gurshafriri/audio-spacer) is a Max/MSP-based tool with controls to record, slice, shift, and disperse sound within a spatial field. In InExI, it functions both as the primary instrument and as the source of the musical material, process, and form. \n\nNeural inhibition and predictive coding shape how we experience light and sound. We lock visuals in space to allow a sense of stability for our body; we eliminate static sound and emphasize its temporal variation to track time. The slicing, shifting, and redistribution of guitar sounds as performed by the audio spacer allow the listener to suspend both habitual processing and intellectual analysis. Combined with the dark room as a visual constraint, they might find themselves re-applying visuospatial synthesis patterns on sound in place of light, bypassing some of the primal inhibitions we impose on it. \n\nAs we attempt to reconstruct stability from whatever we can grasp, even microtonal harmonies and irrational meters resonate with our memories of musical constructs and become unexpected anchors. Both the audio spacer as a tool and InExI as a piece explore this reconstruction of sound in space as a means of, if only for a moment, disorienting our temporal and spatial perception and triggering a new perspective on experience. \n",
-    "artScore": 90,
+    "musicScore": 90,
     "techScore": 70,
     "tags": [
       "2025",
@@ -81,7 +81,7 @@
     "title": "As in water face answereth to face",
     "description": "*כַּ֭מַּיִם הַפָּנִ֣ים לַפָּנִ֑ים   \n  כֵּ֤ן לֵֽב־הָ֝אָדָ֗ם לָאָדָֽם*\n\n*As in water face answereth to face  \n      so the heart of man to man*\n\n\nFor dance, grand piano and 2 pianists\n In collaboration with Matan Serry",
     "techScore": 2,
-    "artScore": 90,
+    "musicScore": 90,
     "imageUrl": "asin.jpg",
     "link": "",
     "tags": [
@@ -100,8 +100,8 @@
     "id": "12a1692d-8f87-800d-b9c3-fc8ecd5daa97",
     "title": "This field of work site",
     "description": "A personal homepage for works and creation based on an Music/Tech axis, to showcase both areas of my interest and how they collide",
-    "techScore": 65,
-    "artScore": 50,
+    "techScore": 50,
+    "musicScore": 50,
     "imageUrl": "thissite.jpg",
     "link": "https://www.github.com/gurshafriri/gurs-creative-field",
     "tags": [
@@ -121,7 +121,7 @@
     "title": "Crabs",
     "description": "A short piece for piano and the Reverse companion \n\n(Crabs go backwards at times)",
     "techScore": 70,
-    "artScore": 75,
+    "musicScore": 75,
     "imageUrl": "crabs.jpg",
     "link": "",
     "tags": [
@@ -142,7 +142,7 @@
     "title": "Reverse companion",
     "description": "Homemade iPad tool for real time reversing via mobile control\n",
     "techScore": 80,
-    "artScore": 50,
+    "musicScore": 50,
     "imageUrl": "reverse.jpg",
     "link": "",
     "tags": [
@@ -161,7 +161,7 @@
     "title": "Yemot Ha'absurd - Une Moga",
     "description": "A concept progressive rock album about storms, magic and saying goodbye. ",
     "techScore": 7,
-    "artScore": 80,
+    "musicScore": 80,
     "imageUrl": "absurd.jpg",
     "link": "https://unemoga.bandcamp.com/album/yemot-haabsurd",
     "tags": [
@@ -182,7 +182,7 @@
     "title": "In.Out",
     "description": "For a prepared upright piano and video projection. \n\nThe performer tries as hard as they can to be inside the piano, inside the sound, be the piano if possible - but finds themself always again out on the other side \n\n",
     "techScore": 15,
-    "artScore": 90,
+    "musicScore": 90,
     "imageUrl": "inout.jpg",
     "link": "",
     "tags": [
@@ -203,7 +203,7 @@
     "title": "Snyk ",
     "description": "Working with Snyk team as a product leader to create amazing developer tools to keep their code safe from vulnerabilities ",
     "techScore": 95,
-    "artScore": 5,
+    "musicScore": 5,
     "imageUrl": "snyk.jpg",
     "link": "www.snyk.io",
     "tags": [
@@ -226,7 +226,7 @@
     "title": "Port",
     "description": "Working with the Port team as a product leader to create amazing developer tools to manage their engineering platform best practices and create an agentic engineering platform. ",
     "techScore": 95,
-    "artScore": 25,
+    "musicScore": 25,
     "imageUrl": "port.jpg",
     "link": "www.port.io",
     "tags": [
@@ -245,7 +245,7 @@
     "title": "A. All of the above B. None of the above",
     "description": "A for bass flute, bassoon and bass clarinet \nB for flute, contrabassoon, clarinet and live electronics \n\nThe piece recalls itself to include what's not in it: You A get everything, at B get nothing, by the end you found what you missed at A.",
     "techScore": 70,
-    "artScore": 75,
+    "musicScore": 75,
     "imageUrl": "allof.jpg",
     "link": "",
     "tags": [
@@ -266,7 +266,7 @@
     "title": "Alpha-bend synchronisation",
     "description": "for 2 Cellos, 2 Bassoons, 2 Percussionists (feat. Nadav Cohen on Bassoon) ",
     "techScore": 15,
-    "artScore": 80,
+    "musicScore": 80,
     "imageUrl": "alpha.jpg",
     "link": "",
     "tags": [
@@ -285,7 +285,7 @@
     "title": "Averager",
     "description": "Max for Live device for creating pitch sets with a target average pitch",
     "techScore": 86,
-    "artScore": 46,
+    "musicScore": 46,
     "imageUrl": "averager.jpg",
     "link": "https://github.com/gurshafriri/averager",
     "tags": [
@@ -304,7 +304,7 @@
     "title": "Mobile",
     "description": "“To most people who look at a mobile,\nit’s no more than a series of flat objects that move.\nTo a few, though, it may be poetry.”\n— Alexander Calder\n\nStudies show that we tend to be remarkably accurate at identifying the average pitch within a series of random pitches. This insight inspired Mobile, a piece for mixed ensemble built on a new system of pitch organization — one centered on the average pitch rather than the tonic or fundamental frequency familiar from tonal or spectral music.\n\nLike a Calder mobile, the piece is constructed from a set of carefully balanced “objects.” Each object averages to a particular pitch, and the ensemble of objects, in turn, revolves around D4. Most of these objects were first created using Averager (github.com/gurshafriri/averager), a Max for Live MIDI device built as a computer-aided composition tool while composing the work. Averager generates random pitch sets whose average matches a target pitch. The user can control the number of notes, the range around the average, and several playback parameters for live or studio contexts.\n\nComposing with this approach turns pitch manipulation into a complex act of equilibrium: every note shifted upward or downward requires a counterbalance elsewhere — just as a sculptor must adjust each element of a mobile before allowing it to move freely in space. Timbre, contour, rhythm, and pace take on a larger role as tools for shaping the piece’s form and flow.\n\nThis method of average-based organization echoes the same principle of balance that guided composers from cantus firmus to dodecaphony: what rises must eventually fall, and vice versa. In that sense, the twelve-tone technique can be seen as a flat and fixed realization of an average-based system — an ever-balanced set of pitches that defines motion through stability. Is Mobile a static or a moving work of art? The listener may change their mind throughout, perhaps reaching balance by the end.\n",
     "techScore": 60,
-    "artScore": 90,
+    "musicScore": 90,
     "imageUrl": "mobile.jpg",
     "link": "",
     "tags": [
@@ -324,7 +324,7 @@
     "title": "Tabur",
     "description": "“Shape the clay into a vessel;\nIt is the space within that makes it useful.\n“\n\nTabur, for three percussionists and choir, investigates the shared ground between two seemingly distant sound worlds: the human voice and percussion.\n\nThis relationship is revealed through the extensive use of sustain-based percussion instruments — gongs, Tibetan bowls, vibraphone, and bass drum. All gongs and bowls underwent preliminary spectral analysis; their unique spectra serve as the harmonic model for the choir’s pitch organization, blending the two worlds from the very outset.\n\nAs a counterpoint, the piece focuses on the percussive nature of speech — verbal consonants as siblings of attack-based percussion. The singers recite Hebrew words, spoken freely or in pitch, sometimes sung, and shaped into fricative textures that intertwine with the instrumental gestures.\n\nThe chosen text, drawn from Lao Tzu, resonates with the work’s musical intention. It reflects on the isness of what lies in between — the space of a room, the cavity of a bowl. The consonants and percussive strikes represent what is: active, tangible, finite. The vowels and sustained tones embody what isn’t: resonance, aftermath, the reaction of space to changes in matter. Fricative sounds remind us that there is no real difference between the two — nor between voice and percussion, human and instrument.\n",
     "techScore": 25,
-    "artScore": 90,
+    "musicScore": 90,
     "imageUrl": "tabur.jpg",
     "link": "https://www.youtube.com/watch?v=auITvKDuV1o&list=RDauITvKDuV1o",
     "tags": [
@@ -344,7 +344,7 @@
     "title": "The Canvas",
     "description": "virtual open space for placing auditory events saved on our joint timeline. In early stages. ",
     "techScore": 90,
-    "artScore": 44,
+    "musicScore": 44,
     "imageUrl": "",
     "link": "",
     "tags": [
@@ -364,7 +364,7 @@
     "title": "Locomotion",
     "description": "for Violin, Cello, Piano, electric guitar and live electronics  (feat. Gur Shafriri on Guitar) \n\nWe are always in the move. ",
     "techScore": 72,
-    "artScore": 85,
+    "musicScore": 85,
     "imageUrl": "locomotion.jpg",
     "link": "",
     "tags": [

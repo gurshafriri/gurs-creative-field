@@ -68,7 +68,7 @@ export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick }) =>
                             <div className="h-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" style={{ width: `${project.techScore}%` }}></div>
                         </div>
                         <div className="h-1 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div className="h-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" style={{ width: `${project.artScore}%` }}></div>
+                            <div className="h-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" style={{ width: `${project.musicScore}%` }}></div>
                         </div>
                     </div>
                 </div>

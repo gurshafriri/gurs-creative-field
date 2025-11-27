@@ -24,7 +24,7 @@ function App() {
   
   // View State
   const [zoom, setZoom] = useState(1);
-  const [currentCoords, setCurrentCoords] = useState({ tech: 50, art: 50 });
+  const [currentCoords, setCurrentCoords] = useState({ tech: 50, music: 50 });
   
   // Selection State
   const [selectedProject, setSelectedProject] = useState<ProcessedProject | null>(null);
@@ -38,6 +38,7 @@ function App() {
   
   // Refs for Audio
   const audioRef = useRef<HTMLAudioElement>(null);
+  const playlistHistory = useRef<Set<string>>(new Set()); // Track history to prevent loops
 
   // Window/Scroll State
   const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
@@ -122,7 +123,7 @@ function App() {
       const x = margin + (p.techScore / 100) * usableWidth;
       
       // Music: 100 (Top) -> 0 (Bottom)
-      const y = margin + ((100 - p.artScore) / 100) * usableHeight;
+      const y = margin + ((100 - p.musicScore) / 100) * usableHeight;
 
       return { ...p, x, y, vx: 0, vy: 0 };
     });
@@ -236,10 +237,7 @@ function App() {
       setAudioDuration(e.currentTarget.duration || 0);
   };
 
-  const handleAudioEnded = () => {
-      setIsAudioPlaying(false);
-      setAudioProgress(0);
-  };
+  /* handleAudioEnded moved to main logic block to access state */
 
   const handleSeek = (time: number) => {
       if (audioRef.current) {
@@ -270,11 +268,11 @@ function App() {
     // Tech: 0 (Left) -> 100 (Right)
     const techVal = Math.round(xRatio * 100);
     // Music: 100 (Top) -> 0 (Bottom) (ScrollY 0 is Top)
-    const artVal = Math.round((1 - yRatio) * 100);
+    const musicVal = Math.round((1 - yRatio) * 100);
     
     setCurrentCoords({
         tech: Math.max(0, Math.min(100, techVal)),
-        art: Math.max(0, Math.min(100, artVal))
+        music: Math.max(0, Math.min(100, musicVal))
     });
 
     if (hasStarted) {
@@ -349,11 +347,81 @@ function App() {
           // If clicking same project, just toggle play
           setIsAudioPlaying(true);
       } else {
+          // New track selected manually: Reset history
+          playlistHistory.current.clear();
+          playlistHistory.current.add(project.id);
+          
           setPlayingProject(project);
           setIsAudioPlaying(true);
       }
       handleMuteRequest(); 
   };
+
+  // Auto-advance Playlist Logic
+  const handleAudioEnded = useCallback(() => {
+      if (!playingProject) return;
+
+      // Add current to history
+      playlistHistory.current.add(playingProject.id);
+
+      // Define featured track
+      const featuredTitle = "Inhibition/Exhibition I";
+
+      // Get all audio projects
+      const audioProjects = processedProjects.filter(p => p.audioUrl);
+
+      // Helper: robust title match
+      const isTitle = (p: ProcessedProject, title: string) => 
+          p.title.trim().toLowerCase() === title.trim().toLowerCase();
+
+      // 1. Identify Featured & Alpha
+      const featuredProject = audioProjects.find(p => isTitle(p, featuredTitle));
+      const alphaProject = audioProjects.find(p => isTitle(p, "Alpha-bend synchronisation"));
+
+      // 2. Construct "Others" (Newest First, excluding Featured & Alpha)
+      const parseDate = (dateStr?: string) => {
+          if (!dateStr) return 0;
+          const [month, year] = dateStr.split('/').map(Number);
+          const fullYear = year < 100 ? 2000 + year : year;
+          return new Date(fullYear, month - 1).getTime();
+      };
+
+      const others = audioProjects
+          .filter(p => !isTitle(p, featuredTitle) && !isTitle(p, "Alpha-bend synchronisation"))
+          .sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
+      let nextProject: ProcessedProject | undefined;
+
+      // LOGIC:
+      // 1. If we haven't played Featured yet (and we aren't playing it now), Play Featured.
+      if (featuredProject && !playlistHistory.current.has(featuredProject.id) && playingProject.id !== featuredProject.id) {
+           nextProject = featuredProject;
+      } 
+      // 2. If we just finished Featured, or Featured is already in history:
+      //    Continue down the "Others" list.
+      else {
+          // Find the first track in 'others' that hasn't been played yet
+          // This handles the case where we started with 'others[0]', went to 'Featured', and need to go to 'others[1]'
+          nextProject = others.find(p => !playlistHistory.current.has(p.id));
+          
+          // If all others played, play Alpha (if not played)
+          if (!nextProject && alphaProject && !playlistHistory.current.has(alphaProject.id)) {
+              nextProject = alphaProject;
+          }
+      }
+
+      if (nextProject) {
+          console.log("Auto-advancing to:", nextProject.title);
+          setPlayingProject(nextProject);
+          setIsAudioPlaying(true);
+          handleMuteRequest();
+      } else {
+          console.log("Playlist finished");
+          setIsAudioPlaying(false);
+          setAudioProgress(0);
+          playlistHistory.current.clear(); // Reset for next time
+      }
+  }, [playingProject, processedProjects, handleMuteRequest]);
 
   const handleTogglePlay = (shouldPlay: boolean) => {
       setIsAudioPlaying(shouldPlay);
@@ -566,7 +634,7 @@ function App() {
                 projects={visibleProjects}
                 onNavigate={handleMinimapNavigate}
                 techScore={currentCoords.tech}
-                artScore={currentCoords.art}
+                musicScore={currentCoords.music}
                 isMuted={isMuted}
                 onToggleMute={toggleMute}
                 isPanelOpen={!!selectedProject}

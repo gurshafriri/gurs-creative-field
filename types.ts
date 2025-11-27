@@ -3,7 +3,7 @@ export interface Project {
     title: string;
     description: string;
     date?: string; // MM/YY
-    artScore: number; // 0-100
+    musicScore: number; // 0-100
     techScore: number; // 0-100
     imageUrl?: string;
     link: string;
@@ -29,7 +29,7 @@ export interface NotionPage {
     id: string;
     url: string;
     properties: {
-        "Art score"?: { number: number | null; [key: string]: any };
+        "Music score"?: { number: number | null; [key: string]: any };
         "Type"?: { multi_select: { name: string; [key: string]: any }[]; [key: string]: any };
         "Tech score"?: { number: number | null; [key: string]: any };
         "Tags "?: { multi_select: { name: string; [key: string]: any }[]; [key: string]: any };

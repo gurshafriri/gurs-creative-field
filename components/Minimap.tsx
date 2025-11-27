@@ -14,7 +14,7 @@ interface MinimapProps {
     onNavigate: (x: number, y: number) => void;
     // Integrated HUD props
     techScore: number;
-    artScore: number;
+    musicScore: number;
     isMuted: boolean;
     onToggleMute: (e: React.MouseEvent) => void;
     isPanelOpen: boolean;
@@ -31,7 +31,7 @@ export const Minimap: React.FC<MinimapProps> = ({
     projects,
     onNavigate,
     techScore,
-    artScore,
+    musicScore,
     isMuted,
     onToggleMute,
     isPanelOpen
@@ -58,12 +58,33 @@ export const Minimap: React.FC<MinimapProps> = ({
             // Clear (Transparent background to let Visualizer show through)
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // 0. Draw Grid (To match the main field)
+            const gridSize = 100; // Matches App.tsx
+            const gridSpacingX = (gridSize / worldWidth) * canvas.width;
+            const gridSpacingY = (gridSize / worldHeight) * canvas.height;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let x = 0; x <= canvas.width; x += gridSpacingX) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+            }
+            // Horizontal lines
+            for (let y = 0; y <= canvas.height; y += gridSpacingY) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+
             // 1. Draw Projects
             projects.forEach(project => {
                 const px = (project.x / worldWidth) * canvas.width;
                 const py = (project.y / worldHeight) * canvas.height;
 
-                const isTech = project.techScore > project.artScore;
+                const isTech = project.techScore > project.musicScore;
                 ctx.fillStyle = isTech ? 'rgba(96, 165, 250, 0.8)' : 'rgba(192, 132, 252, 0.8)'; 
                 
                 ctx.beginPath();
@@ -198,14 +219,14 @@ export const Minimap: React.FC<MinimapProps> = ({
             style={shiftStyle}
         >
             {/* Container */}
-            <div className="relative w-48 h-48 sm:w-64 sm:h-64 bg-neutral-950/80 border border-white/10 shadow-2xl rounded">
+            <div className="relative w-48 h-48 sm:w-64 sm:h-64 bg-neutral-950/90 border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.8)] rounded-lg backdrop-blur-sm">
                 
                 {/* Layer 0: Audio Visualizer (Centered, constrained height) */}
                 <div className="absolute top-1/2 left-0 w-full h-16 -translate-y-1/2 opacity-40 pointer-events-none">
                      <AudioVisualizer 
                         isActive={!isMuted} 
                         techScore={techScore} 
-                        artScore={artScore} 
+                        musicScore={musicScore} 
                     />
                 </div>
 
@@ -244,12 +265,12 @@ export const Minimap: React.FC<MinimapProps> = ({
                 <div className="absolute top-0 right-0 h-full w-0.5 bg-neutral-800 overflow-hidden z-20">
                      <div 
                         className="w-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,1)] absolute bottom-0"
-                        style={{ height: `${artScore}%` }}
+                        style={{ height: `${musicScore}%` }}
                     />
                 </div>
                 {/* Music Label (Floating left of bar) */}
                 <div className="absolute top-1 right-2 z-20 flex items-center gap-1 pointer-events-none">
-                    <span className="text-[10px] font-mono text-purple-300 min-w-[20px] text-right">{Math.round(artScore)}</span>
+                    <span className="text-[10px] font-mono text-purple-300 min-w-[20px] text-right">{Math.round(musicScore)}</span>
                     <span className="text-[10px] font-bold text-neutral-500 tracking-widest">MUSIC</span>
                 </div>
 

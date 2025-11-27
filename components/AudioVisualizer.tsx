@@ -3,10 +3,10 @@ import React, { useEffect, useRef } from 'react';
 interface AudioVisualizerProps {
     isActive: boolean;
     techScore: number; // 0-100
-    artScore: number; // 0-100
+    musicScore: number; // 0-100
 }
 
-export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, techScore, artScore }) => {
+export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, techScore, musicScore }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const timeRef = useRef(0);
     const animationFrameRef = useRef<number | null>(null);
@@ -45,10 +45,10 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
 
             // Parameters derived from props
             const normalizedTech = techScore / 100; // 0 to 1
-            const normalizedArt = artScore / 100;   // 0 to 1
+            const normalizedMusic = musicScore / 100;   // 0 to 1
 
             // Speed: Higher Music = Faster flow
-            const speed = 0.05 + (normalizedArt * 0.15);
+            const speed = 0.05 + (normalizedMusic * 0.15);
             timeRef.current += speed;
 
             // Amplitude: Base size
@@ -56,7 +56,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
 
             // Wave characteristics
             // Tech adds "noise" or "jaggedness"
-            // Art adds "smoothness" or harmonic complexity
+            // Music adds "smoothness" or harmonic complexity
             
             ctx.beginPath();
             ctx.moveTo(0, centerY);
@@ -65,8 +65,8 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
                 const relativeX = x / width;
                 
                 // Base Sine Wave
-                // Frequency increases slightly with Art
-                const frequency = 5 + (normalizedArt * 5);
+                // Frequency increases slightly with Music
+                const frequency = 5 + (normalizedMusic * 5);
                 const sineBase = Math.sin((relativeX * frequency * Math.PI * 2) - timeRef.current);
 
                 // Tech Distortion (The "Saw" effect)
@@ -110,7 +110,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isActive, tech
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [isActive, techScore, artScore]);
+    }, [isActive, techScore, musicScore]);
 
     return (
         <canvas 

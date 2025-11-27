@@ -30,7 +30,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ projects, onUpdate, onCl
             id: crypto.randomUUID(),
             title: 'New Project',
             description: '',
-            artScore: 50,
+            musicScore: 50,
             techScore: 50,
             tags: [],
             link: '',
@@ -159,13 +159,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ projects, onUpdate, onCl
                                 </div>
                                 <div>
                                     <div className="flex justify-between mb-2">
-                                        <label className="text-xs uppercase tracking-widest text-purple-400">Art Score</label>
-                                        <span className="font-mono text-purple-400">{selectedProject.artScore}</span>
+                                        <label className="text-xs uppercase tracking-widest text-purple-400">Music Score</label>
+                                        <span className="font-mono text-purple-400">{selectedProject.musicScore}</span>
                                     </div>
                                     <input 
                                         type="range" min="0" max="100"
-                                        value={selectedProject.artScore}
-                                        onChange={(e) => handleFieldChange('artScore', parseInt(e.target.value))}
+                                        value={selectedProject.musicScore}
+                                        onChange={(e) => handleFieldChange('musicScore', parseInt(e.target.value))}
                                         className="w-full accent-purple-500"
                                     />
                                 </div>
