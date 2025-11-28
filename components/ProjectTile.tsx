@@ -4,9 +4,10 @@ import { ProcessedProject } from '../types';
 interface ProjectTileProps {
     project: ProcessedProject;
     onClick: (project: ProcessedProject) => void;
+    isHighlighted?: boolean;
 }
 
-export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick }) => {
+export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick, isHighlighted }) => {
     const baseUrl = import.meta.env?.BASE_URL || '/';
         
     const mediaPath = (filename: string) => {
@@ -14,9 +15,26 @@ export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick }) =>
         return `${baseUrl}media/${cleanFilename}`.replace('//', '/');
     };
 
+    // Conditional classes for highlight state
+    const containerClasses = isHighlighted 
+        ? "scale-105 border-blue-400/50 z-50" 
+        : "hover:scale-105 hover:border-blue-400/50 hover:z-50";
+    
+    const imageClasses = isHighlighted
+        ? "scale-110 grayscale-0"
+        : "group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0";
+
+    const overlayClasses = isHighlighted
+        ? "bg-neutral-900/40"
+        : "group-hover:bg-neutral-900/40";
+
+    const contentClasses = isHighlighted
+        ? "opacity-75"
+        : "opacity-0 group-hover:opacity-75";
+
     return (
         <div 
-            className="absolute group cursor-pointer"
+            className={`absolute group cursor-pointer ${containerClasses}`}
             style={{
                 width: '240px',
                 transform: 'translate(-50%, -50%)'
@@ -27,16 +45,17 @@ export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick }) =>
             }}
         >
             {/* Album Art Container */}
-            <div className="relative w-full aspect-square rounded-sm border border-white/10 bg-neutral-900 shadow-2xl group-hover:scale-105 group-hover:border-blue-400/50 transition-all duration-300 overflow-hidden">
+            <div className="relative w-full aspect-square rounded-sm border border-white/10 bg-neutral-900 shadow-2xl transition-all duration-300 overflow-hidden">
                 
                 {/* Background Image */}
                 {project.imageUrl ? (
                     <div className="absolute inset-0 z-0">
                         <div 
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+                            className={`absolute inset-0 bg-cover bg-center transition-transform duration-700 ${imageClasses}`}
                             style={{ backgroundImage: `url(${mediaPath(project.imageUrl)})` }}
                         />
-                        {/* Vignette for "Physical Record" feel + Text Legibility in corners */}
+                        <div className={`absolute inset-0 bg-neutral-900/20 transition-colors ${overlayClasses}`} />
+                        {/* Vignette */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] opacity-60" />
                     </div>
                 ) : (
@@ -51,7 +70,7 @@ export const ProjectTile: React.FC<ProjectTileProps> = ({ project, onClick }) =>
                 </div>
                 
                 {/* Hover Overlay (Tags & Bars) */}
-                <div className="relative z-30 flex flex-col justify-between h-full p-3 opacity-0 group-hover:opacity-75 transition-opacity duration-300">
+                <div className={`relative z-30 flex flex-col justify-between h-full p-3 transition-opacity duration-300 ${contentClasses}`}>
                     
                     <div className="flex flex-wrap gap-1.5 justify-end">
                         {project.tags.slice(0, 2).map((tag, i) => (

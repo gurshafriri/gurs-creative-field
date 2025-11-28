@@ -6,6 +6,7 @@ import { Minimap } from './components/Minimap';
 import { WelcomeOverlay } from './components/WelcomeOverlay';
 import { AdminPanel } from './components/AdminPanel';
 import { ProjectDetailPanel } from './components/ProjectDetailPanel';
+import { TimelineDrawer } from './components/TimelineDrawer';
 
 // Constants for the virtual world size
 const WORLD_WIDTH = 3000;
@@ -28,6 +29,8 @@ function App() {
   
   // Selection State
   const [selectedProject, setSelectedProject] = useState<ProcessedProject | null>(null);
+  const [highlightedProject, setHighlightedProject] = useState<ProcessedProject | null>(null);
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
 
   // Audio Playback State
   const [playingProject, setPlayingProject] = useState<ProcessedProject | null>(null);
@@ -447,6 +450,25 @@ function App() {
       });
   }, [zoom]);
 
+  const handleTimelineHighlight = useCallback((project: ProcessedProject | null) => {
+      setHighlightedProject(project);
+      
+      if (project && scrollContainerRef.current) {
+          // Navigate to project
+          const scaledX = project.x * zoom;
+          const scaledY = project.y * zoom;
+          
+          const targetLeft = scaledX - (window.innerWidth / 2);
+          const targetTop = scaledY - (window.innerHeight / 2);
+
+          scrollContainerRef.current.scrollTo({
+              left: targetLeft,
+              top: targetTop,
+              behavior: 'smooth'
+          });
+      }
+  }, [zoom]);
+
   // --- Effects ---
 
   useEffect(() => {
@@ -595,6 +617,7 @@ function App() {
                     <div key={project.id} style={{ position: 'absolute', left: project.x, top: project.y }} className="project-tile">
                         <ProjectTile 
                             project={project} 
+                            isHighlighted={highlightedProject?.id === project.id}
                             onClick={(p) => {
                                 if (!isDragging) setSelectedProject(p);
                             }} 
@@ -620,25 +643,38 @@ function App() {
           onSeek={handleSeek}
       />
 
-      {/* HUD - Placed OUTSIDE the scroll container to ensure fixed positioning works reliably */}
-      {hasStarted && (
-          <>
-            <Minimap 
-                scrollX={scrollPos.x}
-                scrollY={scrollPos.y}
-                worldWidth={WORLD_WIDTH}
-                worldHeight={WORLD_HEIGHT}
-                windowWidth={windowSize.w}
-                windowHeight={windowSize.h}
-                zoom={zoom}
-                projects={visibleProjects}
-                onNavigate={handleMinimapNavigate}
-                techScore={currentCoords.tech}
-                musicScore={currentCoords.music}
-                isMuted={isMuted}
-                onToggleMute={toggleMute}
-                isPanelOpen={!!selectedProject}
-            />
+            {/* HUD - Placed OUTSIDE the scroll container to ensure fixed positioning works reliably */}
+            {hasStarted && (
+                <>
+                    {/* Timeline Drawer - Rendered globally but positioned relative to Minimap visually */}
+                    <TimelineDrawer 
+                        isOpen={isTimelineOpen}
+                        projects={processedProjects}
+                        onSelect={(p) => {
+                            handleTimelineHighlight(p);
+                        }}
+                        onToggle={() => setIsTimelineOpen(!isTimelineOpen)}
+                        highlightedProjectId={highlightedProject?.id || null}
+                    />
+
+                    <Minimap 
+                        scrollX={scrollPos.x}
+                        scrollY={scrollPos.y}
+                        worldWidth={WORLD_WIDTH}
+                        worldHeight={WORLD_HEIGHT}
+                        windowWidth={windowSize.w}
+                        windowHeight={windowSize.h}
+                        zoom={zoom}
+                        projects={visibleProjects}
+                        onNavigate={handleMinimapNavigate}
+                        techScore={currentCoords.tech}
+                        musicScore={currentCoords.music}
+                        isMuted={isMuted}
+                        onToggleMute={toggleMute}
+                        isPanelOpen={!!selectedProject}
+                        isTimelineOpen={isTimelineOpen}
+                        onToggleTimeline={() => setIsTimelineOpen(!isTimelineOpen)}
+                    />
             
             {/* Left Top: Merged Info, Search & Now Playing */}
             <div className="fixed top-4 left-4 right-4 md:top-6 md:left-6 md:right-auto z-50 flex flex-col gap-3 pointer-events-none">
