@@ -156,6 +156,12 @@ class AudioService {
         if (!this.audioCtx || !this.masterGain) return;
         
         const now = this.audioCtx.currentTime;
+        
+        // Cancel any ongoing ramps (e.g. initial fade-in) to prevent race conditions
+        this.masterGain.gain.cancelScheduledValues(now);
+        // Lock current value to prevent popping before starting new ramp
+        this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
+
         // Mute if explicitly muted by user OR if the tab is hidden/backgrounded
         const shouldSilence = this.isMuted || document.hidden;
 

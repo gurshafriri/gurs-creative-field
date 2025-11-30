@@ -20,7 +20,7 @@ function App() {
   const isDirectProjectAccess = initialHash.startsWith('#project/') || initialHash === '#admin';
   
   const [hasStarted, setHasStarted] = useState(isDirectProjectAccess);
-  const [isMuted, setIsMuted] = useState(isDirectProjectAccess); // Mute when accessing directly
+  const [isMuted, setIsMuted] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(initialHash === '#admin');
   
   // Data State
@@ -488,21 +488,20 @@ function App() {
   const selectedProjectRef = useRef(selectedProject);
   const isAdminRef = useRef(isAdminOpen);
   const hasStartedRef = useRef(hasStarted);
-  const pendingHashMatchRef = useRef<string | null>(null); // Track hash we're trying to match
+  // Initialize with current hash if it looks like a project link, so we don't clear it before loading
+  const pendingHashMatchRef = useRef<string | null>(
+    window.location.hash.startsWith('#project/') ? window.location.hash : null
+  );
   
-  useEffect(() => { selectedProjectRef.current = selectedProject; }, [selectedProject]);
+  useEffect(() => { 
+      selectedProjectRef.current = selectedProject;
+      // If a project is selected, we are no longer pending a match
+      if (selectedProject) {
+          pendingHashMatchRef.current = null;
+      }
+  }, [selectedProject]);
   useEffect(() => { isAdminRef.current = isAdminOpen; }, [isAdminOpen]);
   useEffect(() => { hasStartedRef.current = hasStarted; }, [hasStarted]);
-  
-  // Track when we have a hash to match
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.startsWith('#project/') && !selectedProject) {
-      pendingHashMatchRef.current = hash;
-    } else if (selectedProject) {
-      pendingHashMatchRef.current = null; // Clear when project is matched
-    }
-  }, [selectedProject]);
 
   // Start audio service when accessing directly via URL
   useEffect(() => {
@@ -683,7 +682,7 @@ function App() {
        const currentHash = window.location.hash;
        if ((currentHash.startsWith('#project/') || currentHash === '#admin')) {
          // Safe to clear - no pending match and projects are loaded
-         window.history.pushState(null, '', ' ');
+         window.history.pushState(null, '', window.location.pathname + window.location.search);
        }
     }
   }, [selectedProject, isAdminOpen, isLoading]);
