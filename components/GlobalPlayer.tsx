@@ -18,8 +18,13 @@ export const GlobalPlayer = forwardRef<GlobalAudioHandle, GlobalAudioControllerP
         const audioRef = useRef<HTMLAudioElement>(null);
         
         const baseUrl = import.meta.env?.BASE_URL || '/';
+        
+        const isAbsolute = project.audioUrl?.startsWith('http');
         const cleanPath = project.audioUrl?.startsWith('/') ? project.audioUrl.slice(1) : project.audioUrl;
-        const audioSrc = `${baseUrl}media/${cleanPath}`.replace('//', '/');
+        
+        const audioSrc = isAbsolute 
+            ? project.audioUrl 
+            : `${baseUrl}media/${cleanPath}`.replace('//', '/');
 
         // Expose seek method to parent
         useImperativeHandle(ref, () => ({

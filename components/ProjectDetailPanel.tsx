@@ -85,14 +85,33 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({
         setLocalDuration(0); // Reset on change
         if (!project?.audioUrl) return;
 
+        // 1. If we have a hardcoded duration in the JSON, use it immediately (Best Performance)
+        if (project.duration) {
+            setLocalDuration(project.duration);
+            return;
+        }
+
         // If we are already playing this track, we don't need to fetch
         if (currentPlaying?.id === project.id && audioDuration > 0) {
             return; 
         }
 
         const baseUrl = import.meta.env?.BASE_URL || '/';
+        
+        const isAbsolute = project.audioUrl.startsWith('http');
         const cleanFilename = project.audioUrl.startsWith('/') ? project.audioUrl.slice(1) : project.audioUrl;
-        const src = `${baseUrl}media/${cleanFilename}`.replace('//', '/');
+        
+        const src = isAbsolute 
+            ? project.audioUrl 
+            : `${baseUrl}media/${cleanFilename}`.replace('//', '/');
+
+        // OPTIMIZATION: Do NOT pre-fetch metadata for remote files (save Class A/B Ops)
+        // Only pre-fetch for local files where it's cheap.
+        if (isAbsolute) {
+            // If no duration is provided in JSON, we accept showing 0:00 until played
+            // to save costs. If explicit duration is needed, add it to works.json.
+            return;
+        }
 
         const audio = new Audio(src);
         audio.preload = 'metadata';
@@ -116,6 +135,7 @@ export const ProjectDetailPanel: React.FC<ProjectDetailPanelProps> = ({
         
     const mediaPath = (filename: string) => {
         if (!filename) return '';
+        if (filename.startsWith('http')) return filename;
         const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
         return `${baseUrl}media/${cleanFilename}`.replace('//', '/');
     };

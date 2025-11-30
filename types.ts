@@ -9,6 +9,7 @@ export interface Project {
     link: string;
     tags: string[];
     audioUrl?: string; // Filename in /media
+    duration?: number; // Duration in seconds (optional, saves metadata requests)
     videoUrl?: string; // Embed URL (YouTube/Vimeo/Drive)
     scoreUrl?: string; // PDF filename in /media
 }

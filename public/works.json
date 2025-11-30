@@ -16,7 +16,8 @@
     "link": "",
     "date": "01/24",
     "imageUrl": "shti.jpg",
-    "audioUrl": "shti.mp3"
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/shti.mp3",
+    "duration": 206.448617
   },
   {
     "id": "13674bc1-8361-43ce-902b-0193319c6094",
@@ -34,7 +35,8 @@
     ],
     "link": "",
     "imageUrl": "circle.jpg",
-    "audioUrl": "circle.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/circle.mp3",
+    "duration": 187.385034,
     "date": "01/24"
   },
   {
@@ -72,7 +74,8 @@
     ],
     "link": "",
     "imageUrl": "inexi.jpg",
-    "audioUrl": "inexi.flac",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/inexi.flac",
+    "duration": 945.122333,
     "scoreUrl": "inexi.pdf",
     "date": "11/25"
   },
@@ -91,7 +94,8 @@
       "Extended piano",
       "Performed by Gur"
     ],
-    "audioUrl": "asin.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/asin.mp3",
+    "duration": 341.916750,
     "videoUrl": "",
     "scoreUrl": "asin.pdf",
     "date": "07/18"
@@ -132,7 +136,8 @@
       "Piano",
       "Extended piano"
     ],
-    "audioUrl": "crabs.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/crabs.mp3",
+    "duration": 156.984000,
     "videoUrl": "",
     "scoreUrl": "",
     "date": "09/22"
@@ -172,7 +177,8 @@
       "Vocals",
       "Performed by Gur"
     ],
-    "audioUrl": "absurd.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/absurd.mp3",
+    "duration": 1598.732600,
     "videoUrl": "",
     "scoreUrl": "",
     "date": "08/2017"
@@ -193,7 +199,8 @@
       "Audio/Visual interaction",
       "Performed by Gur"
     ],
-    "audioUrl": "inout.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/inout.mp3",
+    "duration": 1515.755100,
     "videoUrl": "https://youtu.be/8UJBojvNFJI?si=wNlDeDKGbc3aikU-",
     "scoreUrl": "inout.pdf",
     "date": "10/23"
@@ -256,7 +263,8 @@
       "Tedarim ensamble",
       "Woodwinds"
     ],
-    "audioUrl": "allof.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/allof.mp3",
+    "duration": 431.008798,
     "videoUrl": "",
     "scoreUrl": "allof.pdf",
     "date": "11/19"
@@ -275,7 +283,8 @@
       "Spectral analysis",
       "Mixed ensamble"
     ],
-    "audioUrl": "alpha.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/alpha.mp3",
+    "duration": 454.635075,
     "videoUrl": "",
     "scoreUrl": "alpha.pdf",
     "date": "01/2020"
@@ -314,7 +323,8 @@
       "Algorithmic composition",
       "Meitar ensamble"
     ],
-    "audioUrl": "mobile.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/mobile.mp3",
+    "duration": 625.968000,
     "videoUrl": "https://www.youtube.com/embed/P-2MkYVtjoE?si=UBKKEx_X40E5cicO",
     "scoreUrl": "mobile.pdf",
     "date": "06/20"
@@ -334,7 +344,8 @@
       "Choir",
       "spectral orchestration"
     ],
-    "audioUrl": "tabur.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/tabur.mp3",
+    "duration": 856.560000,
     "videoUrl": "https://www.youtube.com/embed/auITvKDuV1o?si=vpcxmfOBUtDIwKkH",
     "scoreUrl": "tabur.pdf",
     "date": "08/19"
@@ -377,7 +388,8 @@
       "Guitar",
       "Performed by Gur"
     ],
-    "audioUrl": "locomotion.mp3",
+    "audioUrl": "https://pub-735c0a0bebe34ad5bd69e4d3b5aabe54.r2.dev/locomotion.mp3",
+    "duration": 513.312000,
     "videoUrl": "",
     "scoreUrl": "locomotion.pdf",
     "date": "01/20"

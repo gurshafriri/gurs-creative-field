@@ -69,6 +69,7 @@ function App() {
   const baseUrl = import.meta.env?.BASE_URL || '/';
   const mediaPath = (filename?: string) => {
       if (!filename) return '';
+      if (filename.startsWith('http')) return filename;
       const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
       return `${baseUrl}media/${cleanFilename}`.replace('//', '/');
   };
